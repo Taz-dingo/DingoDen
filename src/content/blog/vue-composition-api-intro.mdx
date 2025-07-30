@@ -1,0 +1,38 @@
+---
+title: "Vue 3 Composition API 入门：拥抱 `ref` 与 `reactive`"
+description: "探索 Vue 3 核心的 Composition API，学习如何使用 `ref` 和 `reactive` 来创建强大且组织良好的响应式状态。"
+pubDate: "Jul 30 2025"
+---
+
+import Note from '../../components/Note.astro';
+import VueCompositionExample from '../../components/VueCompositionExample.vue';
+
+Vue 3 引入了 Composition API（组合式 API），这是一套全新的、函数式的 API，旨在解决在大型应用中逻辑复用和代码组织的问题。与 Vue 2 的 Options API（选项式 API）相比，它让我们能更灵活地将相关的逻辑组织在一起。
+
+其核心就是响应式系统。让我们来看看两个创建响应式数据的基础工具：`ref` 和 `reactive`。
+
+### `ref`：让任何值都具有响应性
+
+`ref` 函数接收一个内部值，并返回一个响应式的、可变的 ref 对象。这个对象只有一个 `.value` 属性，指向该内部值。
+
+<Note title="为什么要用 `.value`？">
+当你在 JavaScript 的 `<script setup>` 部分访问或修改 `ref` 的值时，你需要通过 `.value` 属性。然而，在模板 (`<template>`) 中使用时，Vue 会自动为你“解包”，所以你可以直接写 `{{ count }}` 而不是 `{{ count.value }}`。
+</Note>
+
+### `reactive`：仅适用于对象
+
+`reactive` 函数接收一个对象（或数组），并返回该对象的响应式代理。它会将对象的所有层级都变成响应式的。
+
+<Note title="`ref` vs `reactive`">
+- **通用性**: `ref` 可以用于任何值类型，`reactive` 只能用于对象类型。
+- **访问方式**: `ref` 在脚本中需要 `.value`，`reactive` 不需要。
+- **重新赋值**: `ref` 可以被整个重新赋值，而 `reactive` 声明的变量如果被重新赋值，会失去其响应性。
+
+一个常见的约定是：用 `ref` 处理原始类型和单个对象，用 `reactive` 处理需要深度响应性的复杂对象。
+</Note>
+
+### 交互式示例
+
+下面是一个同时使用了 `ref` 和 `reactive` 的可交互组件，来展示它们的用法。
+
+<VueCompositionExample client:load />
