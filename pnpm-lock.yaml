@@ -32,6 +32,9 @@ importers:
       astro:
         specifier: ^5.12.6
         version: 5.12.6(@types/node@24.1.0)(rollup@4.46.2)(typescript@5.8.3)
+      github-markdown-css:
+        specifier: ^5.8.1
+        version: 5.8.1
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -1361,6 +1364,10 @@ packages:
   get-stream@9.0.1:
     resolution: {integrity: sha512-kVCxPF3vQM/N0B1PmoqVUqgHP+EeVjmZSQn+1oCRPxd2P21P2F19lIgbR3HBosbB1PUhOAoctJnfEn2GbN2eZA==}
     engines: {node: '>=18'}
+
+  github-markdown-css@5.8.1:
+    resolution: {integrity: sha512-8G+PFvqigBQSWLQjyzgpa2ThD9bo7+kDsriUIidGcRhXgmcaAWUIpCZf8DavJgc+xifjbCG+GvMyWr0XMXmc7g==}
+    engines: {node: '>=10'}
 
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
@@ -3810,6 +3817,8 @@ snapshots:
     dependencies:
       '@sec-ant/readable-stream': 0.4.1
       is-stream: 4.0.1
+
+  github-markdown-css@5.8.1: {}
 
   github-slugger@2.0.0: {}
 
