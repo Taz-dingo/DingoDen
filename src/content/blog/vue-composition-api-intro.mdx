@@ -4,8 +4,8 @@ description: "探索 Vue 3 核心的 Composition API，学习如何使用 `ref` 
 pubDate: "Jul 30 2025"
 ---
 
-import Note from '../../components/Note.astro';
-import VueCompositionExample from '../../components/VueCompositionExample.vue';
+import Note from "../../components/Note.astro";
+import VueCompositionExample from "../../components/VueCompositionExample.vue";
 
 Vue 3 引入了 Composition API（组合式 API），这是一套全新的、函数式的 API，旨在解决在大型应用中逻辑复用和代码组织的问题。与 Vue 2 的 Options API（选项式 API）相比，它让我们能更灵活地将相关的逻辑组织在一起。
 
@@ -29,26 +29,27 @@ Vue 3 引入了 Composition API（组合式 API），这是一套全新的、函
 - **重新赋值**: `ref` 可以被整个重新赋值，而 `reactive` 声明的变量如果被重新赋值，会失去其响应性。
 
 一个常见的约定是：用 `ref` 处理原始类型和单个对象，用 `reactive` 处理需要深度响应性的复杂对象。
+
 </Note>
 
 ### 既然`ref`可以处理任何值类型，为什么还要用`reactive`？
 
 `ref` 可以处理任何值类型，包括原始类型和对象。但是，当你需要处理一个对象时，`reactive` 是更好的选择。
+
 - `ref()` 用于任意值（原始值或对象），它会封装在 `.value` 中。
 - `reactive()` 专门用于对象（数组、对象、Map 等），它返回的是原始对象的代理。
 - 虽然你可以用 `ref(obj)` 来代替 `reactive(obj)`，但在组件模板和逻辑中 `reactive()` 更直观、更适合用于对象。
 
-
 #### 用法区别
 
-| 特性     | `ref()`       | `reactive()`         |
-| ------ | ------------- | -------------------- |
-| 支持类型   | 任意值（原始值或对象）   | 只能是对象（对象、数组、Map 等）   |
-| 访问方式   | `.value`      | 直接访问属性               |
-| 模板中使用  | 自动解包          | 直接访问                 |
-| 解构后响应性 | 会丢失响应性        | 搭配 `toRefs()` 可保留响应性 |
-| 嵌套追踪   | 浅层            | 深层响应式代理              |
-| 输出结构   | 带 `.value` 包裹 | 类似原始对象，更直观           |
+| 特性         | `ref()`                | `reactive()`                     |
+| ------------ | ---------------------- | -------------------------------- |
+| 支持类型     | 任意值（原始值或对象） | 只能是对象（对象、数组、Map 等） |
+| 访问方式     | `.value`               | 直接访问属性                     |
+| 模板中使用   | 自动解包               | 直接访问                         |
+| 解构后响应性 | 会丢失响应性           | 搭配 `toRefs()` 可保留响应性     |
+| 嵌套追踪     | 浅层                   | 深层响应式代理                   |
+| 输出结构     | 带 `.value` 包裹       | 类似原始对象，更直观             |
 
 #### 为什么说 `reactive()` 更“自然”
 
@@ -59,8 +60,8 @@ Vue 3 引入了 Composition API（组合式 API），这是一套全新的、函
 5. **更适合管理多个字段**：状态结构清晰，组合式使用更顺手。
 
 #### 总结
-如果你处理的是对象，用 reactive() 会让你的代码更像写普通 JS，不用时时刻刻记得 .value —— 这就是“更自然”。
 
+如果你处理的是对象，用 reactive() 会让你的代码更像写普通 JS，不用时时刻刻记得 .value —— 这就是“更自然”。
 
 ### 交互式示例
 

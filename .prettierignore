@@ -1,0 +1,9 @@
+dist/
+node_modules/
+.astro/
+.git/
+
+# Lockfiles
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

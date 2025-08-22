@@ -1,10 +1,11 @@
 ---
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
 ---
+
 <div class="note">
   <p class="title">{title}</p>
   <slot />

@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
@@ -8,17 +7,14 @@ import Header from "../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead
-      title={SITE_TITLE}
-      description={SITE_DESCRIPTION}
-    />
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
   <body class="text-gray-800">
     <Header />
@@ -29,12 +25,10 @@ const posts = (await getCollection("blog")).sort(
             posts.slice(0, 5).map((post) => (
               <li class="group">
                 <a href={`/archive/${post.id}/`}>
-                  <h2 class="homepage-link-title">
-                    {post.data.title}
-                  </h2>
+                  <h2 class="homepage-link-title">{post.data.title}</h2>
                   <FormattedDate
                     date={post.data.pubDate}
-                    class="text-sm text-gray-500 mt-1"
+                    class="mt-1 text-sm text-gray-500"
                   />
                   <p class="mt-3 text-gray-700">{post.data.description}</p>
                 </a>

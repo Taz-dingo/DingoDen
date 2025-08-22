@@ -11,22 +11,13 @@ type Props = CollectionEntry<"blog">["data"] & {
   headings: { depth: number; text: string; slug: string }[];
 };
 
-const {
-  title,
-  description,
-  pubDate,
-  updatedDate,
-  heroImage,
-  headings,
-} = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings } =
+  Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <BaseHead
-      title={title}
-      description={description}
-    />
+    <BaseHead title={title} description={description} />
     <style>
       .prose .astro-code {
         padding: 1rem;
@@ -40,31 +31,37 @@ const {
     <Header />
     <main class="container mx-auto px-4 py-8">
       <div class="flex gap-12">
-        {headings && headings.length > 0 && (
-          <aside class="w-1/4 sticky top-20 self-start hidden lg:block">
-            <TableOfContents headings={headings} />
-          </aside>
-        )}
-        <article class="prose lg:prose-xl flex-1">
+        {
+          headings && headings.length > 0 && (
+            <aside class="sticky top-20 hidden w-1/4 self-start lg:block">
+              <TableOfContents headings={headings} />
+            </aside>
+          )
+        }
+        <article class="prose flex-1 lg:prose-xl">
           <h1>{title}</h1>
-          <div class="text-sm text-gray-500 mb-4">
+          <div class="mb-4 text-sm text-gray-500">
             <FormattedDate date={pubDate} />
-            {updatedDate && (
-              <span class="ml-2">
-                (Last updated on <FormattedDate date={updatedDate} />)
-              </span>
-            )}
+            {
+              updatedDate && (
+                <span class="ml-2">
+                  (Last updated on <FormattedDate date={updatedDate} />)
+                </span>
+              )
+            }
           </div>
-          <div class="-mx-4 md:-mx-8 mb-8">
-            {heroImage && (
-              <Image
-                src={heroImage}
-                alt={`Hero image for ${title}`}
-                width={1020}
-                height={510}
-                class="w-full rounded-lg"
-              />
-            )}
+          <div class="-mx-4 mb-8 md:-mx-8">
+            {
+              heroImage && (
+                <Image
+                  src={heroImage}
+                  alt={`Hero image for ${title}`}
+                  width={1020}
+                  height={510}
+                  class="w-full rounded-lg"
+                />
+              )
+            }
           </div>
           <slot />
         </article>

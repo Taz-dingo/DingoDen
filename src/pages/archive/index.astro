@@ -5,7 +5,7 @@ import Footer from "../../components/Footer.astro";
 import Header from "../../components/Header.astro";
 
 const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
 const postsByYear: Record<number, CollectionEntry<"blog">[]> = {};
@@ -37,18 +37,18 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
   <body>
     <Header />
     <main class="container mx-auto px-4 py-8">
-      <section class="max-w-3xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8">Archive</h1>
+      <section class="mx-auto max-w-3xl">
+        <h1 class="mb-8 text-4xl font-bold">Archive</h1>
         {
           years.map((year) => (
             <div class="mb-12">
-              <h2 class="text-3xl font-bold mb-6 border-b pb-2">{year}</h2>
+              <h2 class="mb-6 border-b pb-2 text-3xl font-bold">{year}</h2>
               <ul class="space-y-4">
                 {postsByYear[Number(year)].map((post) => (
                   <li>
                     <a
                       href={`/archive/${post.id}/`}
-                      class="flex items-baseline group"
+                      class="group flex items-baseline"
                     >
                       <div class="date-cell text-sm text-gray-500">
                         {post.data.pubDate.toLocaleDateString("en-US", {

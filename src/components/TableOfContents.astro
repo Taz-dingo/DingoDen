@@ -1,4 +1,10 @@
 ---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
 const { headings } = Astro.props;
 
 const toc = headings
@@ -10,18 +16,20 @@ const toc = headings
 ---
 
 <div class="toc-container">
-  <h3 class="text-lg font-semibold mb-2">On this page</h3>
+  <h3 class="mb-2 text-lg font-semibold">On this page</h3>
   <ul class="space-y-2">
-    {toc.map((heading) => (
-      <li>
-        <a
-          href={`#${heading.slug}`}
-          class="text-gray-600 hover:text-blue-600 hover:underline text-sm transition-colors duration-200"
-          style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
-        >
-          {heading.text}
-        </a>
-      </li>
-    ))}
+    {
+      toc.map((heading) => (
+        <li>
+          <a
+            href={`#${heading.slug}`}
+            class="text-sm text-gray-600 transition-colors duration-200 hover:text-blue-600 hover:underline"
+            style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </div>
