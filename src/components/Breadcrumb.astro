@@ -1,0 +1,41 @@
+---
+interface Props {
+  id: string;
+  title: string;
+}
+
+const { id, title } = Astro.props;
+
+const segments = id.split('/').filter(Boolean);
+const breadcrumbs = [];
+
+breadcrumbs.push({ label: 'Home', href: '/' });
+breadcrumbs.push({ label: 'Archive', href: '/archive' });
+
+let currentPath = '/archive';
+for (const segment of segments.slice(0, -1)) {
+  currentPath += `/${segment}`;
+  breadcrumbs.push({ label: segment, href: currentPath });
+}
+
+breadcrumbs.push({ label: title, href: null }); // Current page, no link
+---
+
+<nav aria-label="Breadcrumb">
+  <ol class="flex items-center gap-2 text-sm text-gray-500 mb-4 pl-0">
+    {breadcrumbs.map((crumb, index) => (
+      <li class="flex items-center gap-2 pl-0">
+        {crumb.href ? (
+          <a href={crumb.href} class="no-underline">
+            {crumb.label}
+          </a>
+        ) : (
+          <span class="font-medium text-gray-700">{crumb.label}</span>
+        )}
+        {index < breadcrumbs.length - 1 && (
+          <span class="opacity-50">/</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
