@@ -2,12 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "github-markdown-css/github-markdown.css";
+@layer components {
+  .timeline-link-title {
+    @apply text-lg font-medium text-gray-800 group-hover:text-black;
+  }
 
-.markdown-body {
-  background-color: transparent;
+  .homepage-link-title {
+    @apply text-2xl font-semibold text-gray-800 group-hover:text-black;
+  }
 }
 
-.body {
-  background-color: gray;
-}
+
+

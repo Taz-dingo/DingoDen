@@ -1,0 +1,31 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="About Me"
+      description="An introduction to the author and the blog."
+    />
+  </head>
+  <body class="text-gray-800">
+    <Header />
+    <main class="container mx-auto px-4 py-8">
+      <section class="prose lg:prose-xl mx-auto">
+        <h1>About Me</h1>
+        <p>
+          Hello! This is the about page for dingo den. This is where you can introduce yourself and the purpose of your blog.
+        </p>
+        <p>
+          You can write about your interests, your professional background, or what
+          motivates you to write.
+        </p>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

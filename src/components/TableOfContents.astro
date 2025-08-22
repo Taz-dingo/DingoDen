@@ -1,0 +1,27 @@
+---
+const { headings } = Astro.props;
+
+const toc = headings
+  .filter((heading) => heading.depth > 1 && heading.depth < 4)
+  .map((heading) => ({
+    ...heading,
+    children: [],
+  }));
+---
+
+<div class="toc-container">
+  <h3 class="text-lg font-semibold mb-2">On this page</h3>
+  <ul class="space-y-2">
+    {toc.map((heading) => (
+      <li>
+        <a
+          href={`#${heading.slug}`}
+          class="text-gray-600 hover:text-blue-600 hover:underline text-sm transition-colors duration-200"
+          style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
+        >
+          {heading.text}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>

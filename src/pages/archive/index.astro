@@ -1,0 +1,71 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const postsByYear: Record<number, CollectionEntry<"blog">[]> = {};
+
+posts.forEach((post) => {
+  const year = post.data.pubDate.getFullYear();
+  if (!postsByYear[year]) {
+    postsByYear[year] = [];
+  }
+  postsByYear[year].push(post);
+});
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Archive"
+      description="A chronological list of all posts."
+    />
+    <style>
+      .date-cell {
+        width: 8rem; /* Fixed width for date column */
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="container mx-auto px-4 py-8">
+      <section class="max-w-3xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8">Archive</h1>
+        {
+          years.map((year) => (
+            <div class="mb-12">
+              <h2 class="text-3xl font-bold mb-6 border-b pb-2">{year}</h2>
+              <ul class="space-y-4">
+                {postsByYear[Number(year)].map((post) => (
+                  <li>
+                    <a
+                      href={`/archive/${post.id}/`}
+                      class="flex items-baseline group"
+                    >
+                      <div class="date-cell text-sm text-gray-500">
+                        {post.data.pubDate.toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "2-digit",
+                        })}
+                      </div>
+                      <h3 class="timeline-link-title">{post.data.title}</h3>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

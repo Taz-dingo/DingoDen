@@ -23,9 +23,25 @@ const posts = (await getCollection("blog")).sort(
   <body class="text-gray-800">
     <Header />
     <main class="container mx-auto px-4 py-8">
-      <section class="text-center py-12">
-        <h1 class="text-5xl font-bold">dingo's den</h1>
-        <p class="text-xl text-gray-600 mt-4">this is homepage</p>
+      <section>
+        <ul class="space-y-10">
+          {
+            posts.slice(0, 5).map((post) => (
+              <li class="group">
+                <a href={`/archive/${post.id}/`}>
+                  <h2 class="homepage-link-title">
+                    {post.data.title}
+                  </h2>
+                  <FormattedDate
+                    date={post.data.pubDate}
+                    class="text-sm text-gray-500 mt-1"
+                  />
+                  <p class="mt-3 text-gray-700">{post.data.description}</p>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </section>
     </main>
     <Footer />
