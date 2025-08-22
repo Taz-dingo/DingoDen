@@ -11,3 +11,8 @@
     @apply text-2xl font-semibold text-gray-800 group-hover:text-black;
   }
 }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.07s; /* default 0.25s  */
+}
