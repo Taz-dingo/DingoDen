@@ -6,21 +6,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-white text-gray-800;
+    @apply dark:bg-gray-900 dark:text-gray-200;
+  }
+}
+
 @layer components {
   .timeline-link-title {
     @apply text-lg font-medium text-gray-600 transition-colors duration-200 group-hover:text-black;
+    @apply dark:text-gray-300 dark:group-hover:text-white;
   }
 
   .homepage-link-title {
     @apply text-2xl font-semibold text-gray-600 transition-colors duration-200 group-hover:text-black;
+    @apply dark:text-gray-300 dark:group-hover:text-white;
   }
 
   .toc-link {
     @apply text-gray-500 transition-colors duration-200 hover:text-[var(--highlight-color)];
+    @apply dark:text-gray-400 dark:hover:text-[var(--highlight-color)];
   }
 
   .toc-link-active {
-    @apply text-[var(--highlight-color)];
+    @apply text-[var(--highlight-color)] dark:text-[var(--highlight-color)];
+  }
+
+  .text-secondary {
+    @apply text-gray-700 dark:text-gray-400;
+  }
+
+  .text-muted {
+    @apply text-gray-500 dark:text-gray-400;
   }
 }
 

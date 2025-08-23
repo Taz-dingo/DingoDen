@@ -44,10 +44,10 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
         </aside>
 
         <div class="col-span-12 lg:col-span-6">
-          <article class="prose">
+          <article class="prose dark:prose-invert">
             <Breadcrumb id={id} title={title} />
             <h1>{title}</h1>
-            <div class="mb-4 text-sm text-gray-500">
+            <div class="mb-4 text-sm text-muted">
               <FormattedDate date={pubDate} />
               {
                 updatedDate && (
@@ -72,7 +72,7 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
             </div>
             <slot />
           </article>
-          <div class="prose mb-64 mt-32 flex justify-center">
+          <div class="prose dark:prose-invert mb-64 mt-32 flex justify-center">
             <span class="font-serif text-gray-500"> END </span>
           </div>
         </div>

@@ -27,6 +27,47 @@ const { title, description } = Astro.props;
 />
 <meta name="generator" content={Astro.generator} />
 
+<script is:inline>
+  // This script is placed in the head to prevent FOUC (Flash of Unstyled Content)
+  const theme = (() => {
+    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return "light";
+  })();
+
+  if (theme === "light") {
+    document.documentElement.classList.remove("dark");
+  } else {
+    document.documentElement.classList.add("dark");
+  }
+  // window.localStorage.setItem("theme", theme);
+</script>
+
+<script is:inline>
+  // This MutationObserver will guard the `dark` class on the `<html>` tag
+  const observer = new MutationObserver(() => {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      if (!document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.add('dark');
+      }
+    } else {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  });
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+</script>
+
 <ClientRouter />
 
 <!-- Font preloads -->

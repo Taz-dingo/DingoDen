@@ -6,22 +6,9 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<div class="note">
-  <p class="title">{title}</p>
+<div
+  class="my-6 rounded border-l-4 border-green-400 bg-green-50 px-6 pb-4 pt-1 dark:border-green-500 dark:bg-gray-700"
+>
+  <p class="mb-2 font-bold text-lg">{title}</p>
   <slot />
 </div>
-
-<style>
-  .note {
-    padding: 0.25rem 1.5rem 1rem;
-    border-left: 4px solid #4ade80;
-    background-color: #f0fdf4;
-    border-radius: 0.25rem;
-    margin: 1.5rem 0;
-  }
-  .title {
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-  }
-</style>

@@ -21,7 +21,7 @@ breadcrumbs.push({ label: title, href: null }); // Current page, no link
 ---
 
 <nav aria-label="Breadcrumb">
-  <ol class="mb-4 flex items-center gap-2 pl-0 text-sm text-gray-500">
+  <ol class="mb-4 flex items-center gap-2 pl-0 text-sm text-muted">
     {
       breadcrumbs.map((crumb, index) => (
         <li class="flex items-center gap-2 pl-0">
@@ -30,7 +30,7 @@ breadcrumbs.push({ label: title, href: null }); // Current page, no link
               {crumb.label}
             </a>
           ) : (
-            <span class="font-medium text-gray-700">{crumb.label}</span>
+            <span class="font-medium text-secondary">{crumb.label}</span>
           )}
           {index < breadcrumbs.length - 1 && <span class="opacity-50">/</span>}
         </li>

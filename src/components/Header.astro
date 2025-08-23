@@ -1,6 +1,7 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
 import Logo from "../assets/logo.svg";
+import ThemeToggler from "./ThemeToggler.astro";
 ---
 
 <header>
@@ -12,11 +13,12 @@ import Logo from "../assets/logo.svg";
         />
         <div class="text-2xl font-bold">Dingo's Den</div>
       </a>
-      <div class="flex gap-4">
+      <div class="flex items-center gap-4">
         <HeaderLink href="/">Home</HeaderLink>
         <HeaderLink href="/archive">Archive</HeaderLink>
         <HeaderLink href="/about">About</HeaderLink>
         <HeaderLink href="/rss.xml">RSS</HeaderLink>
+        <ThemeToggler />
       </div>
     </nav>
   </div>
