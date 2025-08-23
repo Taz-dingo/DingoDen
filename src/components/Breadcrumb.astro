@@ -9,10 +9,9 @@ const { id, title } = Astro.props;
 const segments = id.split('/').filter(Boolean);
 const breadcrumbs = [];
 
-breadcrumbs.push({ label: 'Home', href: '/' });
-breadcrumbs.push({ label: 'Archive', href: '/archive' });
+breadcrumbs.push({ label: 'Blog', href: '/blog' });
 
-let currentPath = '/archive';
+let currentPath = '/blog';
 for (const segment of segments.slice(0, -1)) {
   currentPath += `/${segment}`;
   breadcrumbs.push({ label: segment, href: currentPath });
