@@ -7,24 +7,28 @@ interface Props {
 
 const { headings } = Astro.props;
 
-const toc = headings.filter((heading) => heading.depth > 1 && heading.depth < 4);
+const toc = headings.filter(
+  (heading) => heading.depth > 1 && heading.depth < 4,
+);
 ---
 
 <div class="toc-container">
-  <h3 class="text-lg font-semibold mb-2 capitalize">in this article</h3>
+  <h3 class="mb-2 text-lg font-semibold capitalize">in this article</h3>
   <ul class="space-y-2">
-    {toc.map((heading) => (
-      <li>
-        <a
-          href={`#${heading.slug}`}
-          class="toc-link text-sm"
-          data-slug={heading.slug}
-          style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
-        >
-          {heading.text}
-        </a>
-      </li>
-    ))}
+    {
+      toc.map((heading) => (
+        <li>
+          <a
+            href={`#${heading.slug}`}
+            class="toc-link text-sm"
+            data-slug={heading.slug}
+            style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </div>
 
@@ -34,9 +38,9 @@ const toc = headings.filter((heading) => heading.depth > 1 && heading.depth < 4)
     if (!tocLinks) return () => {};
     const headingsToObserve = tocLinks
       .map((link) =>
-        document.getElementById(link.getAttribute("data-slug") || "")
+        document.getElementById(link.getAttribute("data-slug") || ""),
       )
-      .filter(h => h !== null);
+      .filter((h) => h !== null);
 
     if (headingsToObserve.length === 0) {
       return () => {};
@@ -50,7 +54,7 @@ const toc = headings.filter((heading) => heading.depth > 1 && heading.depth < 4)
       tocLinks.forEach((link) => {
         link.classList.toggle(
           "toc-link-active",
-          link.getAttribute("data-slug") === slug
+          link.getAttribute("data-slug") === slug,
         );
       });
     };
@@ -81,10 +85,12 @@ const toc = headings.filter((heading) => heading.depth > 1 && heading.depth < 4)
       {
         rootMargin: "0px 0px -60% 0px", // 下方 60% 的视口也算观察区
         threshold: [0, 1.0],
-      }
+      },
     );
 
-    headingsToObserve.forEach((heading) => heading && observer.observe(heading));
+    headingsToObserve.forEach(
+      (heading) => heading && observer.observe(heading),
+    );
 
     return () => observer.disconnect();
   };

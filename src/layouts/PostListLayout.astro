@@ -15,36 +15,35 @@ const { title, posts } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead
-      title={title}
-      description={`Posts in the category: ${title}`}
-    />
+    <BaseHead title={title} description={`Posts in the category: ${title}`} />
     <style>
       .date-cell {
         width: 8rem; /* Fixed width for date column */
       }
     </style>
   </head>
-  <body class="flex flex-col min-h-screen">
+  <body class="flex min-h-screen flex-col">
     <Header />
     <main class="container mx-auto flex-1 px-4 py-8">
-      <section class="max-w-3xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8">Category: {title}</h1>
+      <section class="mx-auto max-w-3xl">
+        <h1 class="mb-8 text-4xl font-bold">Category: {title}</h1>
         <ul class="space-y-4">
-          {posts.map((post) => (
-            <li>
-              <a href={`/blog/${post.id}/`} class="flex items-baseline group">
-                <div class="date-cell text-sm text-gray-500">
-                  {post.data.pubDate.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "2-digit",
-                    year: "numeric",
-                  })}
-                </div>
-                <h3 class="timeline-link-title">{post.data.title}</h3>
-              </a>
-            </li>
-          ))}
+          {
+            posts.map((post) => (
+              <li>
+                <a href={`/blog/${post.id}/`} class="group flex items-baseline">
+                  <div class="date-cell text-sm text-gray-500">
+                    {post.data.pubDate.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "2-digit",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <h3 class="timeline-link-title">{post.data.title}</h3>
+                </a>
+              </li>
+            ))
+          }
         </ul>
       </section>
     </main>

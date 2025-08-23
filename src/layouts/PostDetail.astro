@@ -33,12 +33,14 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
     <Header />
     <main class="container mx-auto flex-1 px-4 py-8">
       <div class="grid grid-cols-12 gap-x-8">
-        <aside class="hidden lg:block lg:col-span-3">
-          {headings && headings.length > 0 && (
-            <div class="sticky top-20">
-              <TableOfContents headings={headings} />
-            </div>
-          )}
+        <aside class="hidden lg:col-span-3 lg:block">
+          {
+            headings && headings.length > 0 && (
+              <div class="sticky top-20">
+                <TableOfContents headings={headings} />
+              </div>
+            )
+          }
         </aside>
 
         <div class="col-span-12 lg:col-span-6">
@@ -70,14 +72,12 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
             </div>
             <slot />
           </article>
-          <div class="prose flex justify-center mt-32 mb-64 ">
-            <span class="text-gray-500 font-serif">
-              END
-            </span>
-          </div>  
+          <div class="prose mb-64 mt-32 flex justify-center">
+            <span class="font-serif text-gray-500"> END </span>
+          </div>
         </div>
 
-        <div class="hidden lg:block lg:col-span-3">
+        <div class="hidden lg:col-span-3 lg:block">
           <!-- This is an empty spacer column -->
         </div>
       </div>

@@ -54,22 +54,27 @@ let postsForCategory: CollectionEntry<"blog">[] = [];
 if (props.type === "category") {
   const allPosts = await getCollection("blog");
   postsForCategory = allPosts.filter((post) =>
-    post.id.startsWith(`${props.category}/`)
+    post.id.startsWith(`${props.category}/`),
   );
 }
 
 // Conditionally render post content
 const { Content, headings } =
-  props.type === "post" ? await render(props.entry) : { Content: null, headings: [] };
+  props.type === "post"
+    ? await render(props.entry)
+    : { Content: null, headings: [] };
 ---
 
-<!-- Render based on type -->
-{props.type === "post" && Content && (
-  <PostDetail {...props.entry.data} id={props.entry.id} headings={headings}>
-    <Content />
-  </PostDetail>
-)}
+<!-- Render based on type -->{
+  props.type === "post" && Content && (
+    <PostDetail {...props.entry.data} id={props.entry.id} headings={headings}>
+      <Content />
+    </PostDetail>
+  )
+}
 
-{props.type === "category" && (
-  <PostListLayout title={props.category} posts={postsForCategory} />
-)}
+{
+  props.type === "category" && (
+    <PostListLayout title={props.category} posts={postsForCategory} />
+  )
+}
