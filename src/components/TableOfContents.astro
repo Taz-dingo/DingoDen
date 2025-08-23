@@ -7,29 +7,92 @@ interface Props {
 
 const { headings } = Astro.props;
 
-const toc = headings
-  .filter((heading) => heading.depth > 1 && heading.depth < 4)
-  .map((heading) => ({
-    ...heading,
-    children: [],
-  }));
+const toc = headings.filter((heading) => heading.depth > 1 && heading.depth < 4);
 ---
 
 <div class="toc-container">
-  <h3 class="mb-2 text-lg font-semibold">On this page</h3>
+  <h3 class="text-lg font-semibold mb-2 capitalize">in this article</h3>
   <ul class="space-y-2">
-    {
-      toc.map((heading) => (
-        <li>
-          <a
-            href={`#${heading.slug}`}
-            class="text-sm text-gray-600 transition-colors duration-200 hover:text-blue-600 hover:underline"
-            style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
-          >
-            {heading.text}
-          </a>
-        </li>
-      ))
-    }
+    {toc.map((heading) => (
+      <li>
+        <a
+          href={`#${heading.slug}`}
+          class="toc-link text-sm"
+          data-slug={heading.slug}
+          style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
+        >
+          {heading.text}
+        </a>
+      </li>
+    ))}
   </ul>
 </div>
+
+<script>
+  const setupObserver = () => {
+    const tocLinks = Array.from(document.querySelectorAll(".toc-link"));
+    if (!tocLinks) return () => {};
+    const headingsToObserve = tocLinks
+      .map((link) =>
+        document.getElementById(link.getAttribute("data-slug") || "")
+      )
+      .filter(h => h !== null);
+
+    if (headingsToObserve.length === 0) {
+      return () => {};
+    }
+
+    let activeSlug: string | null = null;
+
+    const updateActive = (slug: string | null) => {
+      if (slug === activeSlug) return;
+      activeSlug = slug;
+      tocLinks.forEach((link) => {
+        link.classList.toggle(
+          "toc-link-active",
+          link.getAttribute("data-slug") === slug
+        );
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // 找出当前视口内“最靠上的” heading
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length > 0) {
+          updateActive(visible[0].target.id);
+        } else {
+          // 没有 heading 在视口内 → fallback 到离顶部最近的已滚出 heading
+          const closestAbove = headingsToObserve
+            .map((h) => ({
+              id: h.id,
+              top: h.getBoundingClientRect().top,
+            }))
+            .filter((h) => h.top <= 0)
+            .sort((a, b) => b.top - a.top)[0];
+          if (closestAbove) {
+            updateActive(closestAbove.id);
+          }
+        }
+      },
+      {
+        rootMargin: "0px 0px -60% 0px", // 下方 60% 的视口也算观察区
+        threshold: [0, 1.0],
+      }
+    );
+
+    headingsToObserve.forEach((heading) => heading && observer.observe(heading));
+
+    return () => observer.disconnect();
+  };
+
+  let cleanupObserver = setupObserver();
+
+  document.addEventListener("astro:page-load", () => {
+    cleanupObserver();
+    cleanupObserver = setupObserver();
+  });
+</script>
