@@ -1,6 +1,6 @@
 ---
 import { getCollection, type CollectionEntry, render } from "astro:content";
-import BlogPost from "../../layouts/BlogPost.astro";
+import PostDetail from "../../layouts/PostDetail.astro";
 import PostListLayout from "../../layouts/PostListLayout.astro";
 
 export async function getStaticPaths() {
@@ -65,9 +65,9 @@ const { Content, headings } =
 
 <!-- Render based on type -->
 {props.type === "post" && Content && (
-  <BlogPost {...props.entry.data} id={props.entry.id} headings={headings}>
+  <PostDetail {...props.entry.data} id={props.entry.id} headings={headings}>
     <Content />
-  </BlogPost>
+  </PostDetail>
 )}
 
 {props.type === "category" && (
