@@ -1,20 +1,75 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
+import { getCollection, type CollectionEntry, render } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
+import PostListLayout from "../../layouts/PostListLayout.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: post,
-  }));
-}
-type Props = CollectionEntry<"blog">;
+  const paths: { params: { slug: string }; props: any }[] = [];
+  const categories = new Set<string>();
 
-const post = Astro.props;
-const { Content, headings } = await render(post);
+  // 1. Generate paths for individual posts
+  for (const post of posts) {
+    paths.push({
+      params: { slug: post.id },
+      props: { type: "post", entry: post },
+    });
+
+    // 2. Discover parent categories from post paths
+    const pathParts = post.id.split("/");
+    if (pathParts.length > 1) {
+      let currentPath = "";
+      for (const part of pathParts.slice(0, -1)) {
+        currentPath = currentPath ? `${currentPath}/${part}` : part;
+        categories.add(currentPath);
+      }
+    }
+  }
+
+  // 3. Generate paths for category pages
+  for (const category of categories) {
+    paths.push({
+      params: { slug: category },
+      props: { type: "category", category: category },
+    });
+  }
+
+  return paths;
+}
+
+interface PostProps {
+  type: "post";
+  entry: CollectionEntry<"blog">;
+}
+
+interface CategoryProps {
+  type: "category";
+  category: string;
+}
+
+const props = Astro.props as PostProps | CategoryProps;
+
+// Conditionally fetch posts for category pages
+let postsForCategory: CollectionEntry<"blog">[] = [];
+if (props.type === "category") {
+  const allPosts = await getCollection("blog");
+  postsForCategory = allPosts.filter((post) =>
+    post.id.startsWith(`${props.category}/`)
+  );
+}
+
+// Conditionally render post content
+const { Content, headings } =
+  props.type === "post" ? await render(props.entry) : { Content: null, headings: [] };
 ---
 
-<BlogPost {...post.data} headings={headings} id={post.id}>
-  <Content />
-</BlogPost>
+<!-- Render based on type -->
+{props.type === "post" && Content && (
+  <BlogPost {...props.entry.data} id={props.entry.id} headings={headings}>
+    <Content />
+  </BlogPost>
+)}
+
+{props.type === "category" && (
+  <PostListLayout title={props.category} posts={postsForCategory} />
+)}
