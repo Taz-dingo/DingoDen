@@ -1,5 +1,6 @@
 ---
 import type { MarkdownHeading } from "astro";
+import Tooltip from "@/components/common/Tooltip.astro";
 
 interface Props {
   headings: MarkdownHeading[];
@@ -24,7 +25,9 @@ const toc = headings.filter(
             data-slug={heading.slug}
             style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
           >
-            {heading.text}
+            <Tooltip text={heading.text} inline={false}>
+              <span class="truncate-line">{heading.text}</span>
+            </Tooltip>
           </a>
         </li>
       ))
@@ -102,3 +105,15 @@ const toc = headings.filter(
     cleanupObserver = setupObserver();
   });
 </script>
+
+<style>
+  .toc-link {
+    display: block;
+  }
+  .truncate-line {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

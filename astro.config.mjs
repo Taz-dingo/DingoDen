@@ -6,6 +6,10 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import vue from "@astrojs/vue";
 import tailwind from "@astrojs/tailwind";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,5 +23,12 @@ export default defineConfig({
   ],
   redirects: {
     "/": "/blog",
+  },
+  vite: {
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "src"),
+      },
+    },
   },
 });

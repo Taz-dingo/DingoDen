@@ -4,9 +4,9 @@ description: "深入探讨 React 中一个常见的陷阱：在父组件内部�
 pubDate: "Jul 30 2025"
 ---
 
-import Note from "../../components/Note.astro";
-import BadExample from "../../components/BadExample.jsx";
-import GoodExample from "../../components/GoodExample.jsx";
+import Note from "@/components/blog/widgets/Note.astro";
+import BadExample from "@/components/blog/demos/BadExample.jsx";
+import GoodExample from "@/components/blog/demos/GoodExample.jsx";
 
 在 React 中，组件的“身份”是其核心协调机制的一部分。React 通过判断两次渲染之间，某个位置的组件类型是否为同一个，来决定是更新现有实例还是销毁并重建一个。
 
