@@ -14,8 +14,12 @@ const toc = headings.filter(
 ---
 
 <div class="toc-container">
-  <h3 class="mb-2 text-lg font-semibold capitalize text-gray-900 dark:text-gray-100">in this article</h3>
-  <ul class="space-y-2">
+  <h3
+    class="mb-2 text-lg font-semibold capitalize text-gray-900 dark:text-gray-100 font-structure-title"
+  >
+    in this article
+  </h3>
+  <ul class="space-y-2 font-article-title">
     {
       toc.map((heading) => (
         <li>

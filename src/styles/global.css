@@ -1,10 +1,10 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
 :root {
   --highlight-color: #ea580c; /* a nice orange color */
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   body {
@@ -31,6 +31,14 @@
 
   .toc-link-active {
     @apply text-[var(--highlight-color)] dark:text-[var(--highlight-color)];
+  }
+
+  .font-structure-title {
+    @apply font-serif;
+  }
+
+  .font-article-title {
+    @apply font-mono;
   }
 
   .text-secondary {

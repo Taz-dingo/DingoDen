@@ -50,21 +50,21 @@ const { title, description } = Astro.props;
 <script is:inline>
   // This MutationObserver will guard the `dark` class on the `<html>` tag
   const observer = new MutationObserver(() => {
-    const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-      if (!document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.add('dark');
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      if (!document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.add("dark");
       }
     } else {
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
+      if (document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.remove("dark");
       }
     }
   });
 
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['class'],
+    attributeFilter: ["class"],
   });
 </script>
 
