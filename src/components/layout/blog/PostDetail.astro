@@ -47,7 +47,7 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
           <article class="prose dark:prose-invert">
             <Breadcrumb id={id} title={title} />
             <h1>{title}</h1>
-            <div class="mb-4 text-sm text-muted">
+            <div class="text-muted mb-4 text-sm">
               <FormattedDate date={pubDate} />
               {
                 updatedDate && (
@@ -72,7 +72,7 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
             </div>
             <slot />
           </article>
-          <div class="prose dark:prose-invert mb-64 mt-32 flex justify-center">
+          <div class="prose mb-64 mt-32 flex justify-center dark:prose-invert">
             <span class="font-serif text-gray-500"> END </span>
           </div>
         </div>
