@@ -49,42 +49,20 @@ export default {
           '5': 'hsl(var(--chart-5))'
         }
       },
-      ypography: ({ theme }) => ({
+      typography: ({ theme }) => ({
         DEFAULT: {
           css: {
-            // 移除行内代码块前后的反引号
-            "code::before": {
-              content: '""',
-            },
-            "code::after": {
-              content: '""',
-            },
-            // 恢复正常字重并添加背景色和边距
-            code: {
-              fontWeight: "400",
-              backgroundColor: theme("colors.gray.100"),
-              padding: "0.2rem 0.4rem",
-              borderRadius: "0.25rem",
-            },
-          },
-        },
-        invert: {
-          css: {
-            // 移除行内代码块前后的反引号
-            "code::before": {
-              content: '""',
-            },
-            "code::after": {
-              content: '""',
-            },
-            // 恢复正常字重并添加背景色和边距
-            code: {
-              color: theme("colors.gray.200"),
-              fontWeight: "400",
-              backgroundColor: theme("colors.gray.800"),
-              padding: "0.2rem 0.4rem",
-              borderRadius: "0.25rem",
-            },
+            '--tw-prose-body': 'hsl(var(--foreground))',
+            '--tw-prose-headings': 'hsl(var(--foreground))',
+            '--tw-prose-bold': 'hsl(var(--foreground))',
+            '--tw-prose-links': 'var(--highlight-color)',
+            '--tw-prose-quotes': 'hsl(var(--foreground))',
+            '--tw-prose-quote-borders': 'hsl(var(--border))',
+            '--tw-prose-captions': 'hsl(var(--muted-foreground))',
+            '--tw-prose-hr': 'hsl(var(--border))',
+            '--tw-prose-code': 'hsl(var(--foreground))',
+            '--tw-prose-pre-bg': 'hsl(var(--secondary))',
+            '--tw-prose-pre-code': 'hsl(var(--foreground))',
           },
         },
       }),
