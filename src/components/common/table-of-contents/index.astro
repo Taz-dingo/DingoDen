@@ -1,0 +1,31 @@
+---
+import type { MarkdownHeading } from "astro";
+import { TableOfContentsWidget } from "./TableOfContentsWidget.tsx";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+<div class="toc-container">
+  <h3
+    class="font-structure-title mb-2 text-lg font-semibold capitalize"
+  >
+    in this article
+  </h3>
+  <TableOfContentsWidget client:load headings={headings} />
+</div>
+
+<style is:global>
+  .toc-link {
+    display: block;
+  }
+  .truncate-line {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

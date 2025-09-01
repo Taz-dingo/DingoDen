@@ -6,7 +6,7 @@ import Breadcrumb from "@/components/common/Breadcrumb.astro";
 import Footer from "@/components/layout/Footer.astro";
 import FormattedDate from "@/components/common/FormattedDate.astro";
 import Header from "@/components/layout/Header.astro";
-import TableOfContents from "@/components/blog/widgets/TableOfContents.astro";
+import TableOfContents from "@/components/common/table-of-contents/index.astro";
 
 type Props = CollectionEntry<"blog">["data"] & {
   id: string;
@@ -47,7 +47,7 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
           <article class="prose dark:prose-invert">
             <Breadcrumb id={id} title={title} />
             <h1>{title}</h1>
-            <div class="text-muted mb-4 text-sm">
+            <div class="text-muted-foreground mb-4 text-sm">
               <FormattedDate date={pubDate} />
               {
                 updatedDate && (

@@ -52,7 +52,7 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
                       href={`/blog/${post.id}/`}
                       class="group flex items-baseline"
                     >
-                      <div class="date-cell text-muted text-sm">
+                      <div class="date-cell text-muted-foreground text-sm">
                         {post.data.pubDate.toLocaleDateString("en-US", {
                           month: "short",
                           day: "2-digit",
