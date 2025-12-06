@@ -1,18 +1,18 @@
 ---
-title: "React 组件的“身份”之谜：为什么你的状态会无故消失？"
+title: "React Pitfall：为什么你的状态会无故消失？"
 description: "深入探讨 React 中一个常见的陷阱：在父组件内部定义子组件，以及它为何会导致状态重置和性能问题。"
 pubDate: "Jul 30 2025"
 ---
 
-import Note from "@/components/blog/widgets/Note.astro";
-import BadExample from "@/components/blog/demos/BadExample.jsx";
-import GoodExample from "@/components/blog/demos/GoodExample.jsx";
+import Note from "@/components/common/Note.astro";
+import BadExample from "./BadExample.jsx";
+import GoodExample from "./GoodExample.jsx";
 
 在 React 中，组件的“身份”是其核心协调机制的一部分。React 通过判断两次渲染之间，某个位置的组件类型是否为同一个，来决定是更新现有实例还是销毁并重建一个。
 
 这个“身份”通常就是组件函数的**引用**。如果引用变了，React 会认为这是一个全新的组件。
 
-### 错误示范：在父组件内部定义组件
+### 错误示范：在父组件内部定义组件定义组件定义组件定义组件定义组件定义组件
 
 下面是一个可交互的例子。请先点击几次子组件的按钮增加计数，然后再点击父组件的按钮，观察计数器如何被重置为 0。
 

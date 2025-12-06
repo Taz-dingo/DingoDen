@@ -1,8 +1,8 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
 import BaseHead from "@/components/layout/BaseHead.astro";
-import Footer from "@/components/layout/Footer.astro";
-import Header from "@/components/layout/Header.astro";
+import Footer from "@/components/layout/BaseFooter.astro";
+import Header from "@/components/layout/BaseHeader.astro";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -44,7 +44,9 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
         {
           years.map((year) => (
             <div class="mb-12">
-              <h2 class="font-structure-title mb-6 border-b pb-2 text-3xl font-bold">{year}</h2>
+              <h2 class="font-structure-title mb-6 border-b pb-2 text-3xl font-bold">
+                {year}
+              </h2>
               <ul class="space-y-4">
                 {postsByYear[Number(year)].map((post) => (
                   <li>
@@ -52,7 +54,7 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
                       href={`/blog/${post.id}/`}
                       class="group flex items-baseline"
                     >
-                      <div class="date-cell text-muted-foreground text-sm">
+                      <div class="date-cell text-sm text-muted-foreground">
                         {post.data.pubDate.toLocaleDateString("en-US", {
                           month: "short",
                           day: "2-digit",

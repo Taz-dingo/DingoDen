@@ -3,9 +3,9 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import BaseHead from "@/components/layout/BaseHead.astro";
 import Breadcrumb from "@/components/common/Breadcrumb.astro";
-import Footer from "@/components/layout/Footer.astro";
+import Footer from "@/components/layout/BaseFooter.astro";
 import FormattedDate from "@/components/common/FormattedDate.astro";
-import Header from "@/components/layout/Header.astro";
+import Header from "@/components/layout/BaseHeader.astro";
 import TableOfContents from "@/components/common/table-of-contents/index.astro";
 
 type Props = CollectionEntry<"blog">["data"] & {
@@ -47,7 +47,7 @@ const { id, title, description, pubDate, updatedDate, heroImage, headings } =
           <article class="prose dark:prose-invert">
             <Breadcrumb id={id} title={title} />
             <h1>{title}</h1>
-            <div class="text-muted-foreground mb-4 text-sm">
+            <div class="mb-4 text-sm text-muted-foreground">
               <FormattedDate date={pubDate} />
               {
                 updatedDate && (

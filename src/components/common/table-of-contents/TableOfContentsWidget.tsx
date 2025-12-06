@@ -1,69 +1,36 @@
-
 import type { MarkdownHeading } from "astro";
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/common/tooltip";
+import React, { useEffect, useState, useRef } from "react";
+import { TooltipProvider } from "@/components/ui/Tooltip";
+import { TruncatedTooltipLink } from "@/components/ui/TruncatedTooltipLink";
 
 interface Props {
   headings: MarkdownHeading[];
 }
 
-function TocEntry({ heading, activeSlug }: { heading: MarkdownHeading, activeSlug: string | null }) {
-  const liRef = useRef<HTMLLIElement>(null);
-  const linkRef = useRef<HTMLAnchorElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
-
-  useLayoutEffect(() => {
-    const check = () => {
-      const element = linkRef.current;
-      if (element) {
-        setIsTruncated(element.scrollWidth > element.clientWidth);
-      }
-    };
-
-    check(); // Run synchronously
-
-    window.addEventListener("resize", check);
-    return () => {
-      window.removeEventListener("resize", check);
-    };
-  }, []);
-
-  // The link element, which will be conditionally wrapped by the Tooltip
-  const link = (
-    <a
-      ref={linkRef}
-      href={`#${heading.slug}`}
-      className={`toc-link truncate-line text-sm ${
-        heading.slug === activeSlug ? "toc-link-active" : ""
-      }`}
-      data-slug={heading.slug}
-      style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
-    >
-      {heading.text}
-    </a>
-  );
-
+// TocEntry now passes props directly to TruncatedTooltipLink
+function TocEntry({
+  heading,
+  activeSlug,
+}: {
+  heading: MarkdownHeading;
+  activeSlug: string | null;
+}) {
   return (
-    <li ref={liRef}>
-      {isTruncated ? (
-        <Tooltip>
-          <TooltipTrigger asChild>{link}</TooltipTrigger>
-          <TooltipContent container={liRef.current}>
-            <p>{heading.text}</p>
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        link
-      )}
+    <li>
+      <TruncatedTooltipLink
+        text={heading.text}
+        href={`#${heading.slug}`}
+        className={`toc-link truncate-line text-sm ${
+          heading.slug === activeSlug ? "toc-link-active" : ""
+        }`}
+        data-slug={heading.slug}
+        style={{ marginLeft: `${(heading.depth - 2) * 1}rem` }}
+      />
     </li>
   );
 }
 
+// Main widget component
 export function TableOfContentsWidget({ headings }: Props) {
   const toc = headings.filter(
     (heading) => heading.depth > 1 && heading.depth < 4,
@@ -115,7 +82,11 @@ export function TableOfContentsWidget({ headings }: Props) {
     <TooltipProvider delayDuration={0}>
       <ul className="font-article-title space-y-2">
         {toc.map((heading) => (
-          <TocEntry key={heading.slug} heading={heading} activeSlug={activeSlug} />
+          <TocEntry
+            key={heading.slug}
+            heading={heading}
+            activeSlug={activeSlug}
+          />
         ))}
       </ul>
     </TooltipProvider>

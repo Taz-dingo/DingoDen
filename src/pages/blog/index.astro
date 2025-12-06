@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import BaseHead from "@/components/layout/BaseHead.astro";
-import Footer from "@/components/layout/Footer.astro";
+import Footer from "@/components/layout/BaseFooter.astro";
 import FormattedDate from "@/components/common/FormattedDate.astro";
-import Header from "@/components/layout/Header.astro";
+import Header from "@/components/layout/BaseHeader.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 
 const posts = (await getCollection("blog")).sort(
@@ -33,9 +33,11 @@ const posts = (await getCollection("blog")).sort(
                   </h2>
                   <FormattedDate
                     date={post.data.pubDate}
-                    class="text-muted-foreground mt-1 text-sm"
+                    class="mt-1 text-sm text-muted-foreground"
                   />
-                  <p class="text-muted-foreground mt-3">{post.data.description}</p>
+                  <p class="mt-3 text-muted-foreground">
+                    {post.data.description}
+                  </p>
                 </a>
               </li>
             ))

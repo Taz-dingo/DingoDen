@@ -1,7 +1,7 @@
 ---
 import HeaderLink from "@/components/common/HeaderLink.astro";
 import Logo from "@/assets/logo.svg";
-import ThemeToggler from "@/components/common/ThemeToggler.astro";
+import ThemeToggle from "@/components/ui/ThemeToggle.tsx";
 ---
 
 <header>
@@ -20,7 +20,7 @@ import ThemeToggler from "@/components/common/ThemeToggler.astro";
         <HeaderLink href="/archive">Archive</HeaderLink>
         <HeaderLink href="/about">About</HeaderLink>
         <HeaderLink href="/rss.xml">RSS</HeaderLink>
-        <ThemeToggler />
+        <ThemeToggle client:load />
       </div>
     </nav>
   </div>
