@@ -1,32 +1,20 @@
 ---
-import BaseHead from "@/components/layout/BaseHead.astro";
-import Footer from "@/components/layout/BaseFooter.astro";
-import Header from "@/components/layout/BaseHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="About Me"
-      description="An introduction to the author and the blog."
-    />
-  </head>
-  <body class="flex min-h-screen flex-col">
-    <Header />
-    <main class="container mx-auto flex-1 px-4 py-8">
-      <section class="prose mx-auto dark:prose-invert">
-        <h1 class="font-structure-title text-4xl">About Me</h1>
-        <p>
-          Hello! This is the about page for dingo den. This is where you can
-          introduce yourself and the purpose of your blog.
-        </p>
-        <p>
-          You can write about your interests, your professional background, or
-          what motivates you to write.
-        </p>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+<BaseLayout
+  title="About Me"
+  description="An introduction to the author and the blog."
+>
+  <section class="prose mx-auto dark:prose-invert">
+    <h1 class="font-structure-title text-4xl">About Me</h1>
+    <p>
+      Hello! This is the about page for dingo den. This is where you can
+      introduce yourself and the purpose of your blog.
+    </p>
+    <p>
+      You can write about your interests, your professional background, or what
+      motivates you to write.
+    </p>
+  </section>
+</BaseLayout>

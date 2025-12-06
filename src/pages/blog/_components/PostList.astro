@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+interface Props {
+  title: string;
+  posts: CollectionEntry<"blog">[];
+}
+
+const { title, posts } = Astro.props;
+---
+
+<BaseLayout title={title} description={`Posts in the category: ${title}`}>
+  <style slot="head">
+    .date-cell {
+      width: 8rem; /* Fixed width for date column */
+    }
+  </style>
+  <section class="mx-auto max-w-3xl">
+    <h1 class="mb-8 text-4xl font-bold">Category: {title}</h1>
+    <ul class="space-y-4">
+      {
+        posts.map((post) => (
+          <li>
+            <a href={`/blog/${post.id}/`} class="group flex items-baseline">
+              <div class="date-cell text-sm text-gray-500">
+                {post.data.pubDate.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "2-digit",
+                  year: "numeric",
+                })}
+              </div>
+              <h3 class="timeline-link-title">{post.data.title}</h3>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

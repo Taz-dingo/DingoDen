@@ -1,8 +1,6 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import BaseHead from "@/components/layout/BaseHead.astro";
-import Footer from "@/components/layout/BaseFooter.astro";
-import Header from "@/components/layout/BaseHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -21,57 +19,41 @@ posts.forEach((post) => {
 const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Archive"
-      description="A chronological list of all posts."
-    />
-    <style>
-      .date-cell {
-        width: 8rem; /* Fixed width for date column */
-      }
-    </style>
-  </head>
-  <body class="flex min-h-screen flex-col">
-    <Header />
-    <main class="container mx-auto flex-1 px-4 py-8">
-      <section class="mx-auto max-w-3xl">
-        <h1 class="font-structure-title mb-8 font-serif text-4xl font-bold">
-          Archive
-        </h1>
-        {
-          years.map((year) => (
-            <div class="mb-12">
-              <h2 class="font-structure-title mb-6 border-b pb-2 text-3xl font-bold">
-                {year}
-              </h2>
-              <ul class="space-y-4">
-                {postsByYear[Number(year)].map((post) => (
-                  <li>
-                    <a
-                      href={`/blog/${post.id}/`}
-                      class="group flex items-baseline"
-                    >
-                      <div class="date-cell text-sm text-muted-foreground">
-                        {post.data.pubDate.toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "2-digit",
-                        })}
-                      </div>
-                      <h3 class="timeline-link-title font-article-title">
-                        {post.data.title}
-                      </h3>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+<BaseLayout title="Archive" description="A chronological list of all posts.">
+  <style slot="head">
+    .date-cell {
+      width: 8rem; /* Fixed width for date column */
+    }
+  </style>
+  <section class="mx-auto max-w-3xl">
+    <h1 class="font-structure-title mb-8 font-serif text-4xl font-bold">
+      Archive
+    </h1>
+    {
+      years.map((year) => (
+        <div class="mb-12">
+          <h2 class="font-structure-title mb-6 border-b pb-2 text-3xl font-bold">
+            {year}
+          </h2>
+          <ul class="space-y-4">
+            {postsByYear[Number(year)].map((post) => (
+              <li>
+                <a href={`/blog/${post.id}/`} class="group flex items-baseline">
+                  <div class="date-cell text-sm text-muted-foreground">
+                    {post.data.pubDate.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "2-digit",
+                    })}
+                  </div>
+                  <h3 class="timeline-link-title font-article-title">
+                    {post.data.title}
+                  </h3>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+</BaseLayout>

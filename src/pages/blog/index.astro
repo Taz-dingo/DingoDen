@@ -1,9 +1,7 @@
 ---
 import { getCollection } from "astro:content";
-import BaseHead from "@/components/layout/BaseHead.astro";
-import Footer from "@/components/layout/BaseFooter.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 import FormattedDate from "@/components/common/FormattedDate.astro";
-import Header from "@/components/layout/BaseHeader.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 
 const posts = (await getCollection("blog")).sort(
@@ -11,40 +9,26 @@ const posts = (await getCollection("blog")).sort(
 );
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-  </head>
-  <body class="flex min-h-screen flex-col">
-    <Header />
-    <main class="container mx-auto flex-1 px-4 py-8">
-      <section class="mx-auto max-w-3xl">
-        <h1 class="font-structure-title mb-8 text-4xl font-bold">
-          Recent Posts
-        </h1>
-        <ul class="space-y-10">
-          {
-            posts.slice(0, 5).map((post) => (
-              <li class="group">
-                <a href={`/blog/${post.id}/`}>
-                  <h2 class="homepage-link-title font-article-title">
-                    {post.data.title}
-                  </h2>
-                  <FormattedDate
-                    date={post.data.pubDate}
-                    class="mt-1 text-sm text-muted-foreground"
-                  />
-                  <p class="mt-3 text-muted-foreground">
-                    {post.data.description}
-                  </p>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <section class="mx-auto max-w-3xl">
+    <h1 class="font-structure-title mb-8 text-4xl font-bold">Recent Posts</h1>
+    <ul class="space-y-10">
+      {
+        posts.slice(0, 5).map((post) => (
+          <li class="group">
+            <a href={`/blog/${post.id}/`}>
+              <h2 class="homepage-link-title font-article-title">
+                {post.data.title}
+              </h2>
+              <FormattedDate
+                date={post.data.pubDate}
+                class="mt-1 text-sm text-muted-foreground"
+              />
+              <p class="mt-3 text-muted-foreground">{post.data.description}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
