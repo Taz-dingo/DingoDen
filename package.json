@@ -4,9 +4,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter @dingo-den/* dev",
-    "build": "pnpm --filter @dingo-den/* build",
-    "preview": "pnpm --filter @dingo-den/* preview",
+    "dev": "pnpm --filter \"@dingo-den/*\" dev",
+    "dev:blog": "pnpm --filter @dingo-den/blog dev",
+    "dev:kana": "pnpm --filter @dingo-den/kana dev",
+    "build": "pnpm --filter \"@dingo-den/*\" build",
+    "preview": "pnpm --filter \"@dingo-den/*\" preview",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
