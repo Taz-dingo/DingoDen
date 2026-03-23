@@ -80,7 +80,7 @@ export function TableOfContentsWidget({ headings }: Props) {
 
   return (
     <TooltipProvider delayDuration={0}>
-      <ul className="font-article-title space-y-2">
+      <ul className="space-y-2">
         {toc.map((heading) => (
           <TocEntry
             key={heading.slug}

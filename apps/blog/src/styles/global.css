@@ -8,11 +8,12 @@
   --surface-soft: 36 33% 98%;
   --hero-glow: rgba(199, 99, 42, 0.16);
   --font-sans:
-    Inter, "SF Pro Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", sans-serif;
+    system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei",
+    sans-serif;
   --font-serif:
-    "LXGW WenKai", "Iowan Old Style", "Palatino Linotype", "Noto Serif SC",
-    "Songti SC", serif;
+    "Iowan Old Style", Baskerville, "Palatino Linotype", "Times New Roman",
+    "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
   --font-mono:
     "SFMono-Regular", "JetBrains Mono", "Fira Code", "IBM Plex Mono", monospace;
 
@@ -85,6 +86,9 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   * {
@@ -93,6 +97,7 @@
 
   body {
     font-family: var(--font-sans);
+    letter-spacing: -0.01em;
     background:
       radial-gradient(circle at top left, var(--hero-glow), transparent 28%),
       radial-gradient(
@@ -146,7 +151,9 @@
 
   .timeline-link-title {
     color: var(--link-title-color);
-    @apply text-lg font-medium transition-colors duration-300 md:text-xl;
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    @apply text-lg font-medium leading-tight transition-colors duration-300 md:text-xl;
   }
 
   .group:hover .timeline-link-title {
@@ -156,7 +163,8 @@
   .homepage-link-title {
     color: var(--link-title-color);
     font-family: var(--font-serif);
-    @apply text-3xl font-semibold leading-tight transition-colors duration-300 md:text-4xl;
+    letter-spacing: -0.03em;
+    @apply text-3xl font-semibold leading-[1.08] transition-colors duration-300 md:text-4xl;
   }
 
   .group:hover .homepage-link-title {
@@ -178,14 +186,19 @@
   .font-structure-title {
     color: hsl(var(--foreground));
     font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.03em;
   }
 
   .font-article-title {
     font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
 
   .eyebrow {
-    @apply text-xs uppercase tracking-[0.28em] text-muted-foreground;
+    letter-spacing: 0.24em;
+    @apply text-xs uppercase text-muted-foreground;
   }
 
   .section-divider {
@@ -257,7 +270,9 @@
 
   .prose-editorial :where(h1, h2, h3, h4) {
     font-family: var(--font-serif);
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
   }
 
   .prose-editorial :where(h1) {
@@ -273,6 +288,7 @@
   }
 
   .prose-editorial :where(p, li) {
+    font-family: var(--font-sans);
     @apply text-[1.04rem] leading-8 text-foreground/90;
   }
 
@@ -287,6 +303,7 @@
   }
 
   .prose-editorial :where(code):not(:where(pre code)) {
+    font-family: var(--font-mono);
     @apply rounded-md bg-secondary px-1.5 py-0.5 text-[0.92em];
   }
 
