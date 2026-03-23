@@ -3,98 +3,162 @@
 @tailwind utilities;
 
 :root {
-  --highlight-color: #ea580c; /* a nice orange color */
+  --highlight-color: #c7632a;
+  --surface-strong: 32 38% 96%;
+  --surface-soft: 36 33% 98%;
+  --hero-glow: rgba(199, 99, 42, 0.16);
+  --font-sans:
+    Inter, "SF Pro Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", sans-serif;
+  --font-serif:
+    "LXGW WenKai", "Iowan Old Style", "Palatino Linotype", "Noto Serif SC",
+    "Songti SC", serif;
+  --font-mono:
+    "SFMono-Regular", "JetBrains Mono", "Fira Code", "IBM Plex Mono", monospace;
 
-  /* Base theme variables */
-  --background: 0 0% 100%; /* white */
-  --foreground: 215 28% 17%; /* gray-800 */
+  --background: 40 29% 97%;
+  --foreground: 215 27% 15%;
   --card: 0 0% 100%;
-  --card-foreground: 215 28% 17%;
+  --card-foreground: 215 27% 15%;
   --popover: 0 0% 100%;
-  --popover-foreground: 215 28% 17%;
+  --popover-foreground: 215 27% 15%;
 
-  /* Custom component variables */
-  --link-title-color: #4b5563; /* gray-600 */
-  --link-title-hover-color: #000000; /* black */
-  --toc-link-color: #6b7280; /* gray-500 */
-  --note-bg-color: hsl(22, 83%, 95%);
-  --note-border-color: #ea580c;
-  --note-title-color: hsl(22, 83%, 35%);
+  --link-title-color: #4b5563;
+  --link-title-hover-color: #111827;
+  --toc-link-color: #6b7280;
+  --note-bg-color: hsl(28 70% 95%);
+  --note-border-color: #c7632a;
+  --note-title-color: hsl(23 66% 32%);
   --logo-filter: invert(0%);
 
-  /* Shadcn UI variables */
-  --primary: 0 0% 9%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96.1%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96.1%;
-  --muted-foreground: 0 0% 45.1%;
-  --accent: 0 0% 96.1%;
-  --accent-foreground: 0 0% 9%;
+  --primary: 215 27% 15%;
+  --primary-foreground: 40 29% 97%;
+  --secondary: 36 30% 93%;
+  --secondary-foreground: 215 27% 15%;
+  --muted: 35 26% 93%;
+  --muted-foreground: 215 11% 43%;
+  --accent: 30 65% 94%;
+  --accent-foreground: 215 27% 15%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 89.8%;
-  --input: 0 0% 89.8%;
-  --ring: 0 0% 3.9%;
-  --radius: 0.5rem;
+  --border: 28 18% 84%;
+  --input: 28 18% 84%;
+  --ring: 23 68% 45%;
+  --radius: 1rem;
 }
 
 .dark {
-  /* Base theme variables */
-  --background: 222 47% 11%; /* gray-900 */
-  --foreground: 210 16% 93%; /* gray-200 */
-  --card: 222 47% 11%;
-  --card-foreground: 210 16% 93%;
-  --popover: 222 47% 11%;
-  --popover-foreground: 210 16% 93%;
+  --surface-strong: 218 28% 12%;
+  --surface-soft: 220 22% 14%;
+  --hero-glow: rgba(245, 158, 11, 0.14);
 
-  /* Custom component variables */
-  --link-title-color: #d1d5db; /* gray-300 */
-  --link-title-hover-color: #ffffff; /* white */
-  --toc-link-color: #9ca3af; /* gray-400 */
-  --note-bg-color: hsl(22, 47%, 15%);
-  --note-border-color: #ea580c;
-  --note-title-color: hsl(22, 83%, 65%);
+  --background: 220 22% 10%;
+  --foreground: 35 26% 92%;
+  --card: 220 22% 10%;
+  --card-foreground: 35 26% 92%;
+  --popover: 220 22% 10%;
+  --popover-foreground: 35 26% 92%;
+
+  --link-title-color: #e5dfd4;
+  --link-title-hover-color: #ffffff;
+  --toc-link-color: #b5a998;
+  --note-bg-color: hsl(25 38% 16%);
+  --note-border-color: #f59e0b;
+  --note-title-color: hsl(38 90% 74%);
   --logo-filter: invert(100%);
 
-  /* Shadcn UI variables */
-  --primary: 0 0% 98%;
-  --primary-foreground: 0 0% 9%;
-  --secondary: 0 0% 14.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 14.9%;
-  --muted-foreground: 0 0% 63.9%;
-  --accent: 0 0% 14.9%;
-  --accent-foreground: 0 0% 98%;
+  --primary: 35 26% 92%;
+  --primary-foreground: 220 22% 10%;
+  --secondary: 220 18% 16%;
+  --secondary-foreground: 35 26% 92%;
+  --muted: 220 18% 16%;
+  --muted-foreground: 35 11% 67%;
+  --accent: 22 27% 19%;
+  --accent-foreground: 35 26% 92%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 14.9%;
-  --input: 0 0% 14.9%;
-  --ring: 0 0% 83.1%;
+  --border: 27 12% 24%;
+  --input: 27 12% 24%;
+  --ring: 38 86% 63%;
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(circle at top left, var(--hero-glow), transparent 28%),
+      radial-gradient(
+        circle at 85% 10%,
+        rgba(255, 255, 255, 0.7),
+        transparent 20%
+      ),
+      hsl(var(--background));
+    @apply text-foreground antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--highlight-color) 22%, transparent);
+  }
+
+  a {
+    @apply transition-colors duration-300;
+  }
+
+  p {
+    @apply leading-7;
   }
 }
 
 @layer components {
+  .site-shell {
+    @apply w-full;
+  }
+
+  .site-header {
+    @apply sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl;
+  }
+
+  .nav-link {
+    @apply relative rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground;
+  }
+
+  .nav-link::after {
+    content: "";
+    @apply absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-foreground transition-transform duration-300;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply scale-x-100;
+  }
+
+  .nav-link.active {
+    @apply text-foreground;
+  }
+
   .timeline-link-title {
     color: var(--link-title-color);
-    @apply text-lg font-medium transition-colors duration-200;
+    @apply text-lg font-medium transition-colors duration-300 md:text-xl;
   }
+
   .group:hover .timeline-link-title {
     color: var(--link-title-hover-color);
   }
 
   .homepage-link-title {
     color: var(--link-title-color);
-    @apply text-2xl font-semibold transition-colors duration-200;
+    font-family: var(--font-serif);
+    @apply text-3xl font-semibold leading-tight transition-colors duration-300 md:text-4xl;
   }
+
   .group:hover .homepage-link-title {
     color: var(--link-title-hover-color);
   }
@@ -112,22 +176,141 @@
   }
 
   .font-structure-title {
-    color: var(--foreground);
-    @apply font-serif;
+    color: hsl(var(--foreground));
+    font-family: var(--font-serif);
   }
 
   .font-article-title {
-    @apply font-mono;
+    font-family: var(--font-serif);
   }
 
-  
+  .eyebrow {
+    @apply text-xs uppercase tracking-[0.28em] text-muted-foreground;
+  }
+
+  .section-divider {
+    @apply border-t border-border/70;
+  }
+
+  .editorial-link {
+    @apply inline-flex items-center gap-2 text-sm font-medium text-foreground;
+  }
+
+  .editorial-link::after {
+    content: "↗";
+    @apply text-muted-foreground transition-transform duration-300;
+  }
+
+  .editorial-link:hover::after {
+    @apply -translate-y-0.5 translate-x-0.5 text-foreground;
+  }
+
+  .list-divider > * + * {
+    @apply border-t border-border/60;
+  }
+
+  .fade-up {
+    animation: fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .delay-1 {
+    animation-delay: 120ms;
+  }
+
+  .delay-2 {
+    animation-delay: 220ms;
+  }
+
+  .hero-orb {
+    background:
+      radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.8),
+        transparent 54%
+      ),
+      radial-gradient(circle at 35% 35%, var(--hero-glow), transparent 38%),
+      hsl(var(--surface-strong));
+    box-shadow:
+      inset 0 0 0 1px hsl(var(--border) / 0.75),
+      0 30px 80px -50px rgba(17, 24, 39, 0.45);
+    @apply relative overflow-hidden rounded-[2rem];
+  }
+
+  .hero-orb::before {
+    content: "";
+    @apply absolute inset-6 rounded-[1.5rem] border border-white/35;
+  }
+
+  .hero-orb::after {
+    content: "";
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.45));
+    @apply absolute inset-0 opacity-60;
+  }
 
   .logo-container {
     filter: var(--logo-filter);
+  }
+
+  .prose-editorial {
+    @apply prose prose-neutral max-w-none dark:prose-invert;
+  }
+
+  .prose-editorial :where(h1, h2, h3, h4) {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .prose-editorial :where(h1) {
+    @apply text-4xl leading-tight md:text-5xl;
+  }
+
+  .prose-editorial :where(h2) {
+    @apply mt-16 text-3xl;
+  }
+
+  .prose-editorial :where(h3) {
+    @apply mt-12 text-2xl;
+  }
+
+  .prose-editorial :where(p, li) {
+    @apply text-[1.04rem] leading-8 text-foreground/90;
+  }
+
+  .prose-editorial :where(a) {
+    color: var(--highlight-color);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .prose-editorial :where(blockquote) {
+    @apply border-l border-border/80 pl-5 italic text-foreground/80;
+  }
+
+  .prose-editorial :where(code):not(:where(pre code)) {
+    @apply rounded-md bg-secondary px-1.5 py-0.5 text-[0.92em];
+  }
+
+  .prose-editorial :where(pre) {
+    @apply rounded-3xl border border-border/80 bg-secondary/65 shadow-none;
+  }
+
+  .prose-editorial :where(hr) {
+    @apply my-12;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.07s; /* default 0.25s  */
+  animation-duration: 0.12s;
 }

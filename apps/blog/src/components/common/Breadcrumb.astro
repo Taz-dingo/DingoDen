@@ -17,22 +17,26 @@ for (const segment of segments.slice(0, -1)) {
   breadcrumbs.push({ label: segment, href: currentPath });
 }
 
-breadcrumbs.push({ label: title, href: null }); // Current page, no link
+breadcrumbs.push({ label: title, href: null });
 ---
 
 <nav aria-label="Breadcrumb">
-  <ol class="text-muted-foreground mb-4 flex items-center gap-2 pl-0 text-sm">
+  <ol
+    class="mb-4 flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground"
+  >
     {
       breadcrumbs.map((crumb, index) => (
-        <li class="flex items-center gap-2 pl-0">
+        <li class="flex items-center gap-2">
           {crumb.href ? (
-            <a href={crumb.href} class="no-underline">
+            <a href={crumb.href} class="hover:text-foreground">
               {crumb.label}
             </a>
           ) : (
-            <span class="text-muted-foreground font-medium">{crumb.label}</span>
+            <span class="max-w-[28ch] truncate text-foreground/80">
+              {crumb.label}
+            </span>
           )}
-          {index < breadcrumbs.length - 1 && <span class="opacity-50">/</span>}
+          {index < breadcrumbs.length - 1 && <span class="opacity-40">/</span>}
         </li>
       ))
     }

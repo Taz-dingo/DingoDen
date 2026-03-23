@@ -3,18 +3,65 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-  title="About Me"
-  description="An introduction to the author and the blog."
+  title="About"
+  description="Why Dingo's Den exists and what kind of notes are published here."
 >
-  <section class="prose mx-auto dark:prose-invert">
-    <h1 class="font-structure-title text-4xl">About Me</h1>
-    <p>
-      Hello! This is the about page for dingo den. This is where you can
-      introduce yourself and the purpose of your blog.
-    </p>
-    <p>
-      You can write about your interests, your professional background, or what
-      motivates you to write.
-    </p>
+  <section class="mx-auto max-w-4xl py-6 md:py-12">
+    <div
+      class="grid gap-8 border-b border-border/70 pb-10 md:grid-cols-[minmax(0,1.15fr)_minmax(220px,0.85fr)] md:items-end"
+    >
+      <div class="space-y-4">
+        <p class="eyebrow">About</p>
+        <h1
+          class="font-structure-title text-5xl leading-tight tracking-[-0.04em] md:text-6xl"
+        >
+          A small notebook for frontend work that should stay learnable.
+        </h1>
+      </div>
+      <p class="text-sm leading-7 text-muted-foreground md:text-base">
+        Dingo&apos;s Den is where implementation details, framework edge cases,
+        and interface decisions get written down before they disappear.
+      </p>
+    </div>
+
+    <div class="grid gap-12 py-10 md:grid-cols-[minmax(0,1fr)_240px]">
+      <div class="prose-editorial">
+        <p>
+          Most posts here begin as something annoying, subtle, or easy to
+          forget: a state bug, a design decision, a component behavior that only
+          makes sense after tracing it twice.
+        </p>
+        <p>
+          The goal is not volume. The goal is to keep useful explanations close,
+          practical, and readable enough to revisit when the same problem shows
+          up again.
+        </p>
+        <p>
+          If you like notes that are opinionated, concise, and grounded in real
+          implementation details, you&apos;ll probably feel at home here.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <div class="space-y-2">
+          <p class="eyebrow">Topics</p>
+          <p class="text-sm leading-7 text-muted-foreground md:text-base">
+            React, Vue, component architecture, interaction polish, and frontend
+            system design.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="eyebrow">Format</p>
+          <p class="text-sm leading-7 text-muted-foreground md:text-base">
+            Short essays, implementation notes, and examples that stay close to
+            the code.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="eyebrow">Follow</p>
+          <a href="/rss.xml" class="editorial-link">Subscribe via RSS</a>
+        </div>
+      </div>
+    </div>
   </section>
 </BaseLayout>

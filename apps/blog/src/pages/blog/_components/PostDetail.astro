@@ -15,72 +15,118 @@ type Props = CollectionEntry<"blog">["data"] & {
 
 const { id, title, description, pubDate, updatedDate, heroImage, headings } =
   Astro.props;
+const sectionLabel = id.includes("/")
+  ? id.split("/").slice(0, -1).join(" / ")
+  : "Essay";
 ---
 
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
     <style>
-      .prose .astro-code {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        font-size: 0.9rem;
+      .prose-editorial .astro-code {
+        padding: 1.25rem;
+        border-radius: 1.5rem;
+        font-size: 0.92rem;
       }
     </style>
   </head>
 
   <body class="flex min-h-screen flex-col">
     <Header />
-    <main class="container mx-auto flex-1 px-4 py-8">
-      <div class="grid grid-cols-12 gap-x-8">
-        <aside class="hidden lg:col-span-3 lg:block">
-          {
-            headings && headings.length > 0 && (
-              <div class="sticky top-20">
-                <TableOfContents headings={headings} />
+    <main class="flex-1 px-4 pb-16 pt-8 md:px-6 md:pb-24 md:pt-10">
+      <section class="mx-auto max-w-6xl">
+        <div
+          class="grid gap-10 lg:grid-cols-[200px_minmax(0,1fr)_220px] lg:gap-12"
+        >
+          <aside class="hidden lg:block">
+            <div class="sticky top-28 space-y-5 text-sm text-muted-foreground">
+              <div class="space-y-2 border-b border-border/70 pb-5">
+                <p class="eyebrow">Section</p>
+                <p class="font-medium text-foreground/80">{sectionLabel}</p>
               </div>
-            )
-          }
-        </aside>
-
-        <div class="col-span-12 lg:col-span-6">
-          <article class="prose dark:prose-invert">
-            <Breadcrumb id={id} title={title} />
-            <h1>{title}</h1>
-            <div class="mb-4 text-sm text-muted-foreground">
-              <FormattedDate date={pubDate} />
+              <div class="space-y-2 border-b border-border/70 pb-5">
+                <p class="eyebrow">Published</p>
+                <FormattedDate date={pubDate} class="text-sm" />
+              </div>
               {
                 updatedDate && (
-                  <span class="ml-2">
-                    (Last updated on <FormattedDate date={updatedDate} />)
-                  </span>
+                  <div class="space-y-2 border-b border-border/70 pb-5">
+                    <p class="eyebrow">Updated</p>
+                    <FormattedDate date={updatedDate} class="text-sm" />
+                  </div>
                 )
               }
             </div>
-            <div class="-mx-4 mb-8 md:-mx-8">
-              {
-                heroImage && (
+          </aside>
+
+          <div class="min-w-0">
+            <header class="fade-up border-b border-border/70 pb-8 md:pb-10">
+              <Breadcrumb id={id} title={title} />
+              <div class="space-y-5">
+                <p class="eyebrow">{sectionLabel}</p>
+                <h1
+                  class="font-structure-title max-w-4xl text-4xl leading-tight tracking-[-0.04em] md:text-6xl"
+                >
+                  {title}
+                </h1>
+                <p
+                  class="max-w-2xl text-base leading-8 text-muted-foreground md:text-xl md:leading-9"
+                >
+                  {description}
+                </p>
+                <div
+                  class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
+                >
+                  <FormattedDate date={pubDate} />
+                  {
+                    updatedDate && (
+                      <>
+                        <span class="h-1 w-1 rounded-full bg-border" />
+                        <span>
+                          Updated <FormattedDate date={updatedDate} />
+                        </span>
+                      </>
+                    )
+                  }
+                </div>
+              </div>
+            </header>
+
+            {
+              heroImage && (
+                <div class="fade-up delay-1 my-10 overflow-hidden rounded-[2rem] border border-border/70 bg-secondary/40 p-2 md:my-12">
                   <Image
                     src={heroImage}
                     alt={`Hero image for ${title}`}
                     width={1020}
                     height={510}
-                    class="w-full rounded-lg"
+                    class="w-full rounded-[1.4rem] object-cover"
                   />
-                )
-              }
-            </div>
-            <slot />
-          </article>
-          <div class="prose mb-64 mt-32 flex justify-center dark:prose-invert">
-            <span class="font-serif text-gray-500"> END </span>
-          </div>
-        </div>
+                </div>
+              )
+            }
 
-        <div class="hidden lg:col-span-3 lg:block">
-          <!-- This is an empty spacer column -->
+            <article class="prose-editorial fade-up delay-1 pt-2">
+              <slot />
+            </article>
+
+            <div class="mt-16 border-t border-border/70 pt-8 text-center">
+              <p class="eyebrow">End of note</p>
+            </div>
+          </div>
+
+          <aside class="hidden lg:block">
+            {
+              headings && headings.length > 0 && (
+                <div class="sticky top-28 rounded-[1.5rem] border border-border/70 bg-background/60 p-5 backdrop-blur-sm">
+                  <TableOfContents headings={headings} />
+                </div>
+              )
+            }
+          </aside>
         </div>
-      </div>
+      </section>
     </main>
     <Footer />
   </body>

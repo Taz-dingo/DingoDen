@@ -3,5 +3,20 @@ const today = new Date();
 ---
 
 <footer class="mb-4 text-center text-sm text-gray-400">
-  &copy; {today.getFullYear()} Tazdingo. All rights reserved.
+  <div
+    class="site-shell mx-auto flex max-w-6xl flex-col gap-4 border-t border-border/70 px-4 py-8 text-left text-sm text-muted-foreground md:px-6 md:text-base"
+  >
+    <div class="flex flex-col justify-between gap-3 md:flex-row md:items-end">
+      <div class="space-y-1.5">
+        <p class="font-structure-title text-lg text-foreground">Dingo's Den</p>
+        <p class="max-w-2xl text-sm leading-6 text-muted-foreground">
+          Notes on frontend craft, framework behavior, and building calmer
+          interfaces.
+        </p>
+      </div>
+      <p class="text-xs uppercase tracking-[0.24em] text-muted-foreground/80">
+        &copy; {today.getFullYear()} Tazdingo
+      </p>
+    </div>
+  </div>
 </footer>

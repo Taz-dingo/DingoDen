@@ -20,40 +20,63 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
 <BaseLayout title="Archive" description="A chronological list of all posts.">
-  <style slot="head">
-    .date-cell {
-      width: 8rem; /* Fixed width for date column */
-    }
-  </style>
-  <section class="mx-auto max-w-3xl">
-    <h1 class="font-structure-title mb-8 font-serif text-4xl font-bold">
-      Archive
-    </h1>
-    {
-      years.map((year) => (
-        <div class="mb-12">
-          <h2 class="font-structure-title mb-6 border-b pb-2 text-3xl font-bold">
-            {year}
-          </h2>
-          <ul class="space-y-4">
-            {postsByYear[Number(year)].map((post) => (
-              <li>
-                <a href={`/blog/${post.id}/`} class="group flex items-baseline">
-                  <div class="date-cell text-sm text-muted-foreground">
-                    {post.data.pubDate.toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "2-digit",
-                    })}
-                  </div>
-                  <h3 class="timeline-link-title font-article-title">
-                    {post.data.title}
-                  </h3>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
+  <section class="mx-auto max-w-5xl py-6 md:py-12">
+    <div
+      class="mb-14 grid gap-6 border-b border-border/70 pb-8 md:grid-cols-[minmax(0,1.2fr)_minmax(240px,0.8fr)] md:items-end"
+    >
+      <div class="space-y-4">
+        <p class="eyebrow">Archive</p>
+        <h1
+          class="font-structure-title text-5xl leading-tight tracking-[-0.04em] md:text-6xl"
+        >
+          All writing, in order.
+        </h1>
+      </div>
+      <p
+        class="max-w-md text-sm leading-7 text-muted-foreground md:justify-self-end md:text-base"
+      >
+        A clean chronological index of every published note, grouped by year and
+        kept easy to scan.
+      </p>
+    </div>
+
+    <div class="space-y-14">
+      {
+        years.map((year) => (
+          <section class="grid gap-6 md:grid-cols-[120px_minmax(0,1fr)] md:gap-10">
+            <div>
+              <p class="font-structure-title text-3xl md:sticky md:top-28 md:text-4xl">
+                {year}
+              </p>
+            </div>
+            <ul class="list-divider">
+              {postsByYear[Number(year)].map((post) => (
+                <li class="py-5 md:py-6">
+                  <a
+                    href={`/blog/${post.id}/`}
+                    class="group grid gap-3 md:grid-cols-[96px_minmax(0,1fr)] md:items-baseline md:gap-8"
+                  >
+                    <div class="text-sm uppercase tracking-[0.16em] text-muted-foreground">
+                      {post.data.pubDate.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "2-digit",
+                      })}
+                    </div>
+                    <div class="space-y-2">
+                      <h2 class="timeline-link-title font-article-title text-xl md:text-2xl">
+                        {post.data.title}
+                      </h2>
+                      <p class="text-sm leading-7 text-muted-foreground md:text-base">
+                        {post.data.description}
+                      </p>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
   </section>
 </BaseLayout>

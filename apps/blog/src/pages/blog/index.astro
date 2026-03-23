@@ -3,32 +3,213 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import FormattedDate from "@/components/common/FormattedDate.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
+import Logo from "@/assets/logo.svg";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const featuredPost = posts[0];
+const postCount = posts.length.toString().padStart(2, "0");
 ---
 
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <section class="mx-auto max-w-3xl">
-    <h1 class="font-structure-title mb-8 text-4xl font-bold">Recent Posts</h1>
-    <ul class="space-y-10">
-      {
-        posts.slice(0, 5).map((post) => (
-          <li class="group">
-            <a href={`/blog/${post.id}/`}>
-              <h2 class="homepage-link-title font-article-title">
-                {post.data.title}
-              </h2>
-              <FormattedDate
-                date={post.data.pubDate}
-                class="mt-1 text-sm text-muted-foreground"
-              />
-              <p class="mt-3 text-muted-foreground">{post.data.description}</p>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+<BaseLayout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  mainClass="flex-1 px-0 pt-0 pb-16 md:pb-24"
+>
+  <section class="site-shell overflow-hidden">
+    <div
+      class="mx-auto grid max-w-6xl gap-14 px-4 pb-14 pt-10 md:px-6 md:pb-20 md:pt-14 lg:min-h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-center lg:gap-20"
+    >
+      <div class="space-y-8">
+        <div class="fade-up space-y-6">
+          <p class="eyebrow">Frontend notes / personal notebook</p>
+          <div class="space-y-4">
+            <h1
+              class="font-structure-title max-w-4xl text-5xl leading-[0.95] tracking-[-0.05em] md:text-7xl lg:text-[6.5rem]"
+            >
+              Dingo&apos;s Den
+            </h1>
+            <p
+              class="max-w-xl text-lg leading-8 text-muted-foreground md:text-xl md:leading-9"
+            >
+              Frontend notes on interface craft, framework pitfalls, and the
+              quieter mechanics of the web.
+            </p>
+          </div>
+        </div>
+
+        <div class="fade-up delay-1 flex flex-wrap items-center gap-4">
+          {
+            featuredPost && (
+              <a
+                href={`/blog/${featuredPost.id}/`}
+                class="inline-flex items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-foreground/90"
+              >
+                Read latest note
+              </a>
+            )
+          }
+          <a
+            href="/archive"
+            class="inline-flex items-center justify-center rounded-full border border-border/80 px-6 py-3 text-sm font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/40"
+          >
+            Browse archive
+          </a>
+        </div>
+
+        <div
+          class="fade-up delay-2 grid max-w-2xl gap-5 border-t border-border/70 pt-6 text-sm text-muted-foreground md:grid-cols-3"
+        >
+          <div>
+            <p class="eyebrow mb-2">Focus</p>
+            <p>
+              React, Vue, interface systems, and implementation details worth
+              writing down.
+            </p>
+          </div>
+          <div>
+            <p class="eyebrow mb-2">Writing</p>
+            <p>{postCount} published notes, kept concise and practical.</p>
+          </div>
+          <div>
+            <p class="eyebrow mb-2">Rhythm</p>
+            <p>
+              Slow updates, careful edits, and a bias toward clarity over noise.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-up delay-1 lg:justify-self-end">
+        <div class="hero-orb min-h-[420px] p-8 md:min-h-[520px] md:p-10">
+          <div
+            class="relative z-10 flex h-full flex-col justify-between gap-10"
+          >
+            <div
+              class="flex items-start justify-between gap-4 text-sm text-muted-foreground"
+            >
+              <p class="eyebrow text-[0.7rem]">Issue {postCount}</p>
+              <p>{new Date().getFullYear()}</p>
+            </div>
+
+            <div class="flex flex-1 items-center justify-center py-6">
+              <div class="logo-container">
+                <Logo
+                  aria-label="Dingo's Den logo"
+                  class="mx-auto w-48 max-w-full opacity-90 md:w-64"
+                />
+              </div>
+            </div>
+
+            {
+              featuredPost && (
+                <div class="space-y-3 border-t border-border/70 pt-6">
+                  <p class="eyebrow">Latest note</p>
+                  <a href={`/blog/${featuredPost.id}/`} class="group block">
+                    <h2 class="font-article-title text-2xl leading-tight text-foreground transition-colors duration-300 group-hover:text-[var(--highlight-color)] md:text-3xl">
+                      {featuredPost.data.title}
+                    </h2>
+                    <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <FormattedDate date={featuredPost.data.pubDate} />
+                      <span class="h-1 w-1 rounded-full bg-border" />
+                      <span class="line-clamp-1">
+                        {featuredPost.data.description}
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
+      <div
+        class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
+      >
+        <div class="space-y-3">
+          <p class="eyebrow">Selected writings</p>
+          <h2 class="font-structure-title text-4xl md:text-5xl">
+            Recent posts
+          </h2>
+        </div>
+        <p
+          class="max-w-xl text-sm leading-7 text-muted-foreground md:text-base"
+        >
+          Short notes with practical takeaways, mostly around frontend
+          engineering and interface behavior.
+        </p>
+      </div>
+
+      <ul class="list-divider">
+        {
+          posts.map((post, index) => (
+            <li class="py-8 md:py-10">
+              <a
+                href={`/blog/${post.id}/`}
+                class="group grid gap-4 md:grid-cols-[140px_minmax(0,1fr)_220px] md:items-start md:gap-8"
+              >
+                <div class="text-sm uppercase tracking-[0.16em] text-muted-foreground">
+                  <FormattedDate date={post.data.pubDate} />
+                </div>
+                <div class="space-y-3">
+                  <h3 class="homepage-link-title font-article-title">
+                    {post.data.title}
+                  </h3>
+                  <p class="max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">
+                    {post.data.description}
+                  </p>
+                </div>
+                <div class="flex items-center justify-start text-sm text-muted-foreground md:justify-end">
+                  <span class="editorial-link">
+                    {index === 0 ? "Latest note" : "Open essay"}
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-divider">
+    <div
+      class="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-3 md:px-6 md:py-20"
+    >
+      <div class="space-y-3">
+        <p class="eyebrow">Archive</p>
+        <h3 class="font-structure-title text-2xl">Chronological index</h3>
+        <p class="text-sm leading-7 text-muted-foreground md:text-base">
+          Browse every note in one quiet list, ordered by year and stripped of
+          clutter.
+        </p>
+        <a href="/archive" class="editorial-link">Open archive</a>
+      </div>
+      <div class="space-y-3">
+        <p class="eyebrow">About</p>
+        <h3 class="font-structure-title text-2xl">Why this exists</h3>
+        <p class="text-sm leading-7 text-muted-foreground md:text-base">
+          A small corner for keeping hard-earned framework lessons and interface
+          details in reach.
+        </p>
+        <a href="/about" class="editorial-link">Read about</a>
+      </div>
+      <div class="space-y-3">
+        <p class="eyebrow">RSS</p>
+        <h3 class="font-structure-title text-2xl">Follow quietly</h3>
+        <p class="text-sm leading-7 text-muted-foreground md:text-base">
+          Prefer feed readers to timelines? Subscribe once and catch new posts
+          when they arrive.
+        </p>
+        <a href="/rss.xml" class="editorial-link">Get the feed</a>
+      </div>
+    </div>
   </section>
 </BaseLayout>

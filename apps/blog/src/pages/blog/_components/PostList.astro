@@ -11,26 +11,47 @@ const { title, posts } = Astro.props;
 ---
 
 <BaseLayout title={title} description={`Posts in the category: ${title}`}>
-  <style slot="head">
-    .date-cell {
-      width: 8rem; /* Fixed width for date column */
-    }
-  </style>
-  <section class="mx-auto max-w-3xl">
-    <h1 class="mb-8 text-4xl font-bold">Category: {title}</h1>
-    <ul class="space-y-4">
+  <section class="mx-auto max-w-5xl py-6 md:py-12">
+    <div
+      class="mb-12 grid gap-6 border-b border-border/70 pb-8 md:grid-cols-[minmax(0,1.1fr)_minmax(220px,0.9fr)] md:items-end"
+    >
+      <div class="space-y-4">
+        <p class="eyebrow">Category</p>
+        <h1
+          class="font-structure-title text-5xl leading-tight tracking-[-0.04em] md:text-6xl"
+        >
+          {title}
+        </h1>
+      </div>
+      <p class="text-sm leading-7 text-muted-foreground md:text-base">
+        All notes filed under this path, presented in the same chronological
+        reading order.
+      </p>
+    </div>
+
+    <ul class="list-divider">
       {
         posts.map((post) => (
-          <li>
-            <a href={`/blog/${post.id}/`} class="group flex items-baseline">
-              <div class="date-cell text-sm text-gray-500">
+          <li class="py-6 md:py-8">
+            <a
+              href={`/blog/${post.id}/`}
+              class="group grid gap-3 md:grid-cols-[140px_minmax(0,1fr)] md:items-baseline md:gap-8"
+            >
+              <div class="text-sm uppercase tracking-[0.16em] text-muted-foreground">
                 {post.data.pubDate.toLocaleDateString("en-US", {
                   month: "short",
                   day: "2-digit",
                   year: "numeric",
                 })}
               </div>
-              <h3 class="timeline-link-title">{post.data.title}</h3>
+              <div class="space-y-2">
+                <h2 class="timeline-link-title font-article-title text-xl md:text-2xl">
+                  {post.data.title}
+                </h2>
+                <p class="text-sm leading-7 text-muted-foreground md:text-base">
+                  {post.data.description}
+                </p>
+              </div>
             </a>
           </li>
         ))
