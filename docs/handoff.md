@@ -52,14 +52,15 @@
 - Header / Footer / navigation 基础收束
 - 全局设计 token 初步收束
 
-### 2. 字体系统正在收口
+### 2. 字体系统与正文样式已完成一轮收口
 
-这部分还未提交，但已经在当前 worktree 中：
+这一轮已经合入当前仓库结构中：
 
 - 去掉了外链的 `LXGW WenKai`
 - 改为更稳定的系统 sans + classic serif + mono 三层结构
 - 修正了 header 和 TOC 对衬线字体的误用
 - 调整了标题字距、正文可读性和代码字体使用
+- 补了一轮代码块、引用块、提示块与表格的正文样式统一
 
 受影响的关键文件：
 
@@ -82,12 +83,10 @@
 
 ## 当前工作区状态
 
-如果你接手的是这个 worktree，那么当前应该包含两类尚未提交的 blog 工作：
+当前仓库已经是 blog single repo，主工作目录是：`/Users/tazdingo/Dingo Projetcts/dingo-den`。
 
-1. 字体统一与细节收口
-2. blog docs 初始化与交接文档
+如果你是新 session，先默认按“一个仓库就是一个 blog 项目”来理解，不再需要额外切到 `apps/blog` 或依赖独立 worktree。
 
-这两部分应该作为 blog 的下一次提交一起整理掉，避免继续悬空。
 
 ## 当前最重要的文件
 
@@ -132,7 +131,7 @@
 2. 再读 `docs/status.md`
 3. 再读 `docs/tasks.md`
 4. 看一眼 `src/styles/global.css`
-5. 跑起来实际看页面
+5. 在仓库根目录直接跑页面
 
 这样能最快理解“方向 → 当前状态 → 下一步 → 代码落点”。
 
@@ -140,8 +139,8 @@
 
 ### 第一优先级
 
-- 提交当前未提交的字体与 docs 改动
-- 确认 `status.md` / `tasks.md` 与实际一致
+- 确认 single repo 下的 docs、README 和实际代码结构一致
+- 继续补真实内容下的阅读体验细节
 
 ### 第二优先级
 
@@ -171,14 +170,14 @@
 在当前仓库中推荐这样跑：
 
 ```bash
-cd "/Users/tazdingo/Dingo Projetcts/dingo-den-blog"
+cd "/Users/tazdingo/Dingo Projetcts/dingo-den"
 pnpm dev
 ```
 
 构建验证：
 
 ```bash
-cd "/Users/tazdingo/Dingo Projetcts/dingo-den-blog"
+cd "/Users/tazdingo/Dingo Projetcts/dingo-den"
 pnpm build
 ```
 

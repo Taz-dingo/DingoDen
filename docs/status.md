@@ -3,9 +3,10 @@
 ## Snapshot
 
 - 日期：2026-03-24
-- 当前工作目录：`/Users/tazdingo/Dingo Projetcts/dingo-den-blog`
-- 当前聚焦：`blog`
-- 最新已提交改版：`e334936` — `feat(blog): redesign editorial layout`
+- 当前工作目录：`/Users/tazdingo/Dingo Projetcts/dingo-den`
+- 当前聚焦：`single-repo blog`
+- 最新结构调整：`cbf550f` — `refactor(blog): collapse repo back to single app`
+- 最近一轮视觉基线：`e334936` — `feat(blog): redesign editorial layout`
 
 ## 当前完成情况
 
@@ -22,8 +23,8 @@
 
 ### 进行中
 
-- 代码块与正文细节体系优化
 - 移动端和真实内容下的样式复查
+- single repo 结构下的文档与开发路径同步
 
 ### 还未完成但明确需要做
 
