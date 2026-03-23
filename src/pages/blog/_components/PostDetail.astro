@@ -25,9 +25,16 @@ const sectionLabel = id.includes("/")
     <BaseHead title={title} description={description} />
     <style>
       .prose-editorial .astro-code {
-        padding: 1.25rem;
-        border-radius: 1.5rem;
+        padding: 1.35rem;
+        border-radius: 1.75rem;
         font-size: 0.92rem;
+        line-height: 1.9;
+      }
+
+      .prose-editorial table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
       }
     </style>
   </head>

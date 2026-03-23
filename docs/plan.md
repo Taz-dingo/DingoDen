@@ -46,6 +46,7 @@
 - 封面图与摘要规范
 - 归档与列表页扫描体验优化
 - SEO / metadata / social card 完善
+- 评估用 MCP 接入既有 Markdown 笔记导入与发布工作流
 
 ### Phase 4 — Signature Details
 
