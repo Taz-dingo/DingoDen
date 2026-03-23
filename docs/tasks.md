@@ -15,6 +15,7 @@
 ## P1 — 当前重点
 
 - [x] 将仓库从 monorepo 形态收回为 blog single repo
+- [x] 清理 single repo 后残留的旧多 app / `apps/kana` 文档引用
 
 - [x] 统一字体系统，明确正文 / 标题 / 代码字体角色
 - [ ] 复查首页首屏在桌面与移动端的层级和节奏
@@ -28,7 +29,7 @@
 
 - [ ] 给代码块引入更成熟的高亮主题
 - [ ] 统一文章页图片、hero 图、说明文字的样式策略
-- [ ] 补全 Open Graph / social sharing 所需元信息
+- [x] 补全页面级 Open Graph / Twitter / article time 基础元信息
 - [ ] 检查并优化移动端导航与文章页边距
 - [ ] 梳理首页是否需要“精选文章 / 最新文章”更明确的关系
 

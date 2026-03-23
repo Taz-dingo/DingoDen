@@ -22,7 +22,14 @@ const sectionLabel = id.includes("/")
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead
+      title={title}
+      description={description}
+      image={heroImage}
+      pageType="article"
+      publishedTime={pubDate}
+      modifiedTime={updatedDate}
+    />
     <style>
       .prose-editorial .astro-code {
         padding: 1.35rem;

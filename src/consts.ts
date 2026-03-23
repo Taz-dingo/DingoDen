@@ -4,3 +4,4 @@
 export const SITE_TITLE = "Dingo's Den";
 export const SITE_DESCRIPTION =
   "Frontend notes on interface craft, framework pitfalls, and the quieter parts of building for the web.";
+export const SITE_AUTHOR = "Tazdingo";

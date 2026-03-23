@@ -1,4 +1,5 @@
 import typography from "@tailwindcss/typography";
+import animate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -49,7 +50,7 @@ export default {
           '5': 'hsl(var(--chart-5))'
         }
       },
-      typography: ({ theme }) => ({
+      typography: () => ({
         DEFAULT: {
           css: {
             '--tw-prose-body': 'hsl(var(--foreground))',
@@ -73,5 +74,5 @@ export default {
       }
     }
   },
-  plugins: [typography(), require("tailwindcss-animate")],
+  plugins: [typography(), animate],
 };

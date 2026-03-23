@@ -20,19 +20,20 @@
 - 字体系统已从外链字体方案回收为更统一的 sans / serif / mono 结构
 - 正文中的代码块、引用块、提示块与表格样式已完成一轮统一收口
 - 已建立 blog 专属 docs 目录与 handoff 文档，可支持新 session 接手
+- single repo 下的文档路径已与当前仓库结构重新对齐
+- 站点基础 metadata 已补齐到页面与文章级别（title / og / twitter / article time）
 
 ### 进行中
 
 - 移动端和真实内容下的样式复查
-- single repo 结构下的文档与开发路径同步
 
 ### 还未完成但明确需要做
 
 - 代码块主题升级
 - 更完整的正文元素样式体系（表格、引用、图片等）
 - 移动端更细致的视觉检查
-- SEO / social metadata 完善
 - 内容策略和写作规范补齐
+- 真实域名确定后的 canonical / OG URL / sharing image 收口
 
 ## 当前风格判断
 

@@ -26,15 +26,24 @@ async function addHobby() {
   <div style="border: 1px solid #ccc; padding: 1rem; border-radius: 4px">
     <h3>计数器 (ref)</h3>
     <p>当前计数值: {{ count }}</p>
-    <button @click="increment">增加</button>
+    <button @click="increment">
+      增加
+    </button>
 
-    <hr style="margin: 1.5rem 0" />
+    <hr style="margin: 1.5rem 0">
 
     <h3>用户信息 (reactive)</h3>
     <p>{{ user.name }} 的爱好:</p>
     <ul>
-      <li v-for="hobby in user.hobbies" :key="hobby">{{ hobby }}</li>
+      <li
+        v-for="hobby in user.hobbies"
+        :key="hobby"
+      >
+        {{ hobby }}
+      </li>
     </ul>
-    <button @click="addHobby">添加爱好</button>
+    <button @click="addHobby">
+      添加爱好
+    </button>
   </div>
 </template>
