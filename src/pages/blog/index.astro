@@ -20,19 +20,19 @@ const postCount = posts.length.toString().padStart(2, "0");
 >
   <section class="site-shell overflow-hidden">
     <div
-      class="mx-auto grid max-w-6xl gap-14 px-4 pb-14 pt-10 md:px-6 md:pb-20 md:pt-14 lg:min-h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-center lg:gap-20"
+      class="mx-auto grid max-w-6xl gap-10 px-4 pb-14 pt-8 md:px-6 md:gap-14 md:pb-20 md:pt-14 lg:min-h-[calc(100svh-5.5rem)] lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-center lg:gap-20"
     >
-      <div class="space-y-8">
-        <div class="fade-up space-y-6">
+      <div class="space-y-7 md:space-y-8">
+        <div class="fade-up space-y-5 md:space-y-6">
           <p class="eyebrow">Frontend notes / personal notebook</p>
-          <div class="space-y-4">
+          <div class="space-y-3 md:space-y-4">
             <h1
-              class="font-structure-title max-w-4xl text-5xl leading-[0.95] tracking-[-0.05em] md:text-7xl lg:text-[6.5rem]"
+              class="font-structure-title max-w-4xl text-[3.25rem] leading-[0.92] tracking-[-0.06em] sm:text-[4.25rem] md:text-7xl lg:text-[6.5rem]"
             >
               Dingo&apos;s Den
             </h1>
             <p
-              class="max-w-xl text-lg leading-8 text-muted-foreground md:text-xl md:leading-9"
+              class="max-w-lg text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8 md:max-w-xl md:text-xl md:leading-9"
             >
               Frontend notes on interface craft, framework pitfalls, and the
               quieter mechanics of the web.
@@ -40,12 +40,12 @@ const postCount = posts.length.toString().padStart(2, "0");
           </div>
         </div>
 
-        <div class="fade-up delay-1 flex flex-wrap items-center gap-4">
+        <div class="fade-up delay-1 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
           {
             featuredPost && (
               <a
                 href={`/blog/${featuredPost.id}/`}
-                class="inline-flex items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-foreground/90"
+                class="inline-flex min-h-12 items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-all duration-300 hover:-translate-y-0.5 hover:bg-foreground/90"
               >
                 Read latest note
               </a>
@@ -53,14 +53,14 @@ const postCount = posts.length.toString().padStart(2, "0");
           }
           <a
             href="/archive"
-            class="inline-flex items-center justify-center rounded-full border border-border/80 px-6 py-3 text-sm font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/40"
+            class="inline-flex min-h-12 items-center justify-center rounded-full border border-border/80 px-6 py-3 text-sm font-medium text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/40"
           >
             Browse archive
           </a>
         </div>
 
         <div
-          class="fade-up delay-2 grid max-w-2xl gap-5 border-t border-border/70 pt-6 text-sm text-muted-foreground md:grid-cols-3"
+          class="fade-up delay-2 grid max-w-2xl gap-5 border-t border-border/70 pt-5 text-sm text-muted-foreground sm:grid-cols-3 sm:pt-6"
         >
           <div>
             <p class="eyebrow mb-2">Focus</p>
@@ -83,9 +83,9 @@ const postCount = posts.length.toString().padStart(2, "0");
       </div>
 
       <div class="fade-up delay-1 lg:justify-self-end">
-        <div class="hero-orb min-h-[420px] p-8 md:min-h-[520px] md:p-10">
+        <div class="hero-orb min-h-[320px] p-6 sm:min-h-[380px] sm:p-8 md:min-h-[520px] md:p-10">
           <div
-            class="relative z-10 flex h-full flex-col justify-between gap-10"
+            class="relative z-10 flex h-full flex-col justify-between gap-8 md:gap-10"
           >
             <div
               class="flex items-start justify-between gap-4 text-sm text-muted-foreground"
@@ -94,26 +94,26 @@ const postCount = posts.length.toString().padStart(2, "0");
               <p>{new Date().getFullYear()}</p>
             </div>
 
-            <div class="flex flex-1 items-center justify-center py-6">
+            <div class="flex flex-1 items-center justify-center py-2 sm:py-4 md:py-6">
               <div class="logo-container">
                 <Logo
                   aria-label="Dingo's Den logo"
-                  class="mx-auto w-48 max-w-full opacity-90 md:w-64"
+                  class="mx-auto w-36 max-w-full opacity-90 sm:w-44 md:w-64"
                 />
               </div>
             </div>
 
             {
               featuredPost && (
-                <div class="space-y-3 border-t border-border/70 pt-6">
+                <div class="space-y-3 border-t border-border/70 pt-5 md:pt-6">
                   <p class="eyebrow">Latest note</p>
                   <a href={`/blog/${featuredPost.id}/`} class="group block">
-                    <h2 class="font-article-title text-2xl leading-tight text-foreground transition-colors duration-300 group-hover:text-[var(--highlight-color)] md:text-3xl">
+                    <h2 class="font-article-title text-xl leading-tight text-foreground transition-colors duration-300 group-hover:text-[var(--highlight-color)] sm:text-2xl md:text-3xl">
                       {featuredPost.data.title}
                     </h2>
-                    <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    <div class="mt-3 flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                       <FormattedDate date={featuredPost.data.pubDate} />
-                      <span class="h-1 w-1 rounded-full bg-border" />
+                      <span class="hidden h-1 w-1 rounded-full bg-border sm:block" />
                       <span class="line-clamp-1">
                         {featuredPost.data.description}
                       </span>

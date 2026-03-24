@@ -7,13 +7,19 @@ import react from "@astrojs/react";
 import vue from "@astrojs/vue";
 import tailwind from "@astrojs/tailwind";
 import path from "node:path";
+import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const siteUrl = process.env.PUBLIC_SITE_URL
+  ? process.env.PUBLIC_SITE_URL
+  : process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://example.com";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+  site: siteUrl,
   integrations: [
     mdx(),
     sitemap(),

@@ -135,6 +135,19 @@
     @apply relative rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground;
   }
 
+  .header-actions {
+    @apply flex items-center;
+  }
+
+  .header-nav-scroller {
+    @apply flex min-w-0 flex-1 items-center gap-1 overflow-x-auto pb-1 pr-2;
+    scrollbar-width: none;
+  }
+
+  .header-nav-scroller::-webkit-scrollbar {
+    display: none;
+  }
+
   .nav-link::after {
     content: "";
     @apply absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-foreground transition-transform duration-300;
@@ -264,6 +277,11 @@
     filter: var(--logo-filter);
   }
 
+  .article-meta-strip {
+    @apply grid gap-3 rounded-[1.25rem] border border-border/70 bg-secondary/35 p-4;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .prose-editorial {
     @apply prose prose-neutral max-w-none dark:prose-invert;
   }
@@ -381,6 +399,37 @@
 
   .prose-editorial :where(hr) {
     @apply my-14;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-orb::before {
+    inset: 1rem;
+    border-radius: 1.2rem;
+  }
+
+  .prose-editorial :where(h2) {
+    @apply mt-14 text-[1.8rem];
+  }
+
+  .prose-editorial :where(h3) {
+    @apply mt-10 text-[1.45rem];
+  }
+
+  .prose-editorial :where(p) {
+    @apply text-[1rem] leading-7;
+  }
+
+  .prose-editorial :where(li) {
+    @apply text-[0.98rem] leading-7;
+  }
+
+  .prose-editorial :where(blockquote) {
+    @apply my-8 rounded-[1.4rem] px-5 py-5;
+  }
+
+  .prose-editorial :where(pre) {
+    @apply mx-[-0.125rem] my-7 rounded-[1.4rem];
   }
 }
 
