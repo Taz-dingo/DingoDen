@@ -1,0 +1,64 @@
+{
+  "source": {
+    "localPath": ".cache/obsidian-source"
+  },
+  "filters": {
+    "includeDirectories": ["AI", "Agents", "LLM", "Evals", "Products/AI"],
+    "excludeDirectories": [
+      "Daily Notes",
+      "Inbox",
+      "Journal",
+      "Life",
+      "Personal",
+      "Finance",
+      "Career Planning",
+      "Company Internal",
+      "Meetings"
+    ]
+  },
+  "safety": {
+    "blockedKeywords": [
+      "confidential",
+      "internal only",
+      "private",
+      "salary",
+      "budget",
+      "customer",
+      "client",
+      "roadmap",
+      "hiring plan"
+    ]
+  },
+  "scoring": {
+    "minWordCount": 180,
+    "positiveKeywords": [
+      "agent",
+      "agents",
+      "llm",
+      "model",
+      "models",
+      "eval",
+      "workflow",
+      "prompt",
+      "rag",
+      "tool calling",
+      "ai product"
+    ],
+    "negativeKeywords": [
+      "daily note",
+      "todo",
+      "shopping",
+      "journal",
+      "travel plan",
+      "private thought"
+    ],
+    "thresholds": {
+      "blocked": -20,
+      "candidate": 28,
+      "strongCandidate": 48
+    }
+  },
+  "generation": {
+    "allowedClassifications": ["candidate", "strong-candidate"]
+  }
+}

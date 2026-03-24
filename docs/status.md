@@ -25,6 +25,7 @@
 - 首页首屏、Header 与文章页完成一轮移动端节奏优化
 - 已补齐 Vercel 发布所需的站点 URL 配置回退逻辑
 - 站点对外定位已从 frontend 调整为 AI / agents / applied AI
+- 已产出 Obsidian → blog 自动发布方案 v1，明确 GitHub repo 为主数据源
 
 ### 进行中
 

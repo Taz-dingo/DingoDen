@@ -44,6 +44,31 @@ pnpm preview
 PUBLIC_SITE_URL=https://你的域名
 ```
 
+## Obsidian 自动导入
+
+仓库中已经包含 Obsidian → blog 的自动导入骨架。
+
+当前默认内容源：`Taz-dingo/obsidian-vault`（私有仓库）
+
+因此 GitHub Actions 还需要你配置一个 secret：
+
+- `OBSIDIAN_SOURCE_TOKEN`：对 `Taz-dingo/obsidian-vault` 具有只读权限的 GitHub token
+
+可用脚本：
+
+```bash
+pnpm obsidian:scan:backfill
+pnpm obsidian:scan:incremental
+pnpm obsidian:drafts
+pnpm obsidian:import
+```
+
+如果要在本地调试，可指定本地 vault 路径：
+
+```bash
+OBSIDIAN_SOURCE_PATH=/你的/obsidian/vault pnpm obsidian:import
+```
+
 ## 项目文档
 
 文档集中放在 `docs/`：

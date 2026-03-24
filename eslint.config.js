@@ -24,6 +24,14 @@ export default tseslint.config(
     },
   },
   {
+    files: ["scripts/**/*.mjs", "astro.config.mjs", "tailwind.config.mjs"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
     // Global rules overrides
     rules: {
       // "astro/no-set-html-directive": "error"
