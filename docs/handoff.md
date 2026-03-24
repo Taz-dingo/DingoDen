@@ -81,6 +81,29 @@
 - `docs/tasks.md`
 - `docs/handoff.md`（当前文件）
 
+### 4. Obsidian 自动导入骨架已落地
+
+已提交 commit：
+
+- `90ace85` — `feat(blog): add obsidian import automation scaffold`
+
+这一轮已经完成：
+
+- 新增导入脚本骨架：扫描 / 候选池 / draft 生成
+- 新增导入配置与状态缓存
+- 新增 GitHub Actions workflow：`Obsidian Import`
+- 默认私有源仓库已指向：`Taz-dingo/obsidian-vault`
+- 已在本地用真实私有 vault 完成一轮 backfill / draft / build 验证
+
+受影响的关键文件：
+
+- `scripts/obsidian-import/index.mjs`
+- `config/obsidian-import.config.json`
+- `data/obsidian-candidates.json`
+- `data/obsidian-import-state.json`
+- `.github/workflows/obsidian-import.yml`
+- `docs/obsidian-publishing-proposal.md`
+
 ## 当前工作区状态
 
 当前仓库已经是 blog single repo，主工作目录是：`/Users/tazdingo/Dingo Projetcts/dingo-den`。
@@ -124,6 +147,7 @@
 - `docs/plan.md`
 - `docs/status.md`
 - `docs/tasks.md`
+- `docs/obsidian-publishing-proposal.md`
 
 ## 新 session 应该先做什么
 
@@ -132,8 +156,10 @@
 1. 先读 `docs/spec.md`
 2. 再读 `docs/status.md`
 3. 再读 `docs/tasks.md`
-4. 看一眼 `src/styles/global.css`
-5. 在仓库根目录直接跑页面
+4. 再读 `docs/obsidian-publishing-proposal.md`
+5. 看一眼 `config/obsidian-import.config.json`
+6. 看一眼 `scripts/obsidian-import/index.mjs`
+7. 在仓库根目录直接跑页面 / 或跑导入脚本
 
 这样能最快理解“方向 → 当前状态 → 下一步 → 代码落点”。
 
@@ -141,13 +167,13 @@
 
 ### 第一优先级
 
-- 确认 single repo 下的 docs、README 和实际代码结构一致
-- 继续补真实内容下的阅读体验细节
+- 用真实 vault 目录更新导入配置，收紧扫描白名单
+- 在 GitHub Actions 中完成第一次 `Obsidian Import` 实跑
 
 ### 第二优先级
 
-- 优化正文中的代码块、引用块、提示块体系
-- 在真实文章内容下检查首页、文章页和移动端表现
+- 收敛敏感词、黑名单目录与自动发布阈值
+- 继续补真实内容下的阅读体验细节
 
 ### 第三优先级
 
@@ -183,11 +209,23 @@ cd "/Users/tazdingo/Dingo Projetcts/dingo-den"
 pnpm build
 ```
 
+Obsidian 导入本地验证：
+
+```bash
+cd "/Users/tazdingo/Dingo Projetcts/dingo-den"
+OBSIDIAN_SOURCE_PATH="/你的/obsidian/vault" pnpm obsidian:scan:backfill
+OBSIDIAN_SOURCE_PATH="/你的/obsidian/vault" pnpm obsidian:drafts
+```
+
+如果使用 GitHub Actions，当前需要在 **blog 仓库** 中配置 secret：
+
+- `OBSIDIAN_SOURCE_TOKEN`
+
 ## 交接结论
 
 如果你是新的 session，可以把当前项目理解成：
 
 - 方向已经有了
 - 第一轮视觉改版已经落地
-- 当前正在把字体与文档体系收尾
-- 接下来重点应回到“阅读体验细节”而不是功能扩张
+- Obsidian 自动导入骨架已经写好并验证过一轮
+- 接下来重点是“把导入规则调准 + 跑第一次线上自动导入”

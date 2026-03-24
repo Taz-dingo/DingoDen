@@ -50,6 +50,13 @@
 - 评估用 MCP 接入既有 Markdown 笔记导入与发布工作流
 - 建立 Obsidian → blog 的自动筛选与发布链路
 
+当前该阶段已进入“从方案到骨架实现”的状态；下一步重点不是再写概念方案，而是：
+
+- 用真实 vault 目录收紧扫描范围
+- 收敛敏感词与黑名单规则
+- 完成第一次 GitHub Actions 实跑
+- 决定 draft 与 auto publish 的阈值
+
 ### Phase 4 — Signature Details
 
 目标：补足品牌感与完成度。

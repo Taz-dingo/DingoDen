@@ -2,11 +2,12 @@
 
 ## Snapshot
 
-- 日期：2026-03-24
+- 日期：2026-03-25
 - 当前工作目录：`/Users/tazdingo/Dingo Projetcts/dingo-den`
 - 当前聚焦：`single-repo AI blog`
 - 最新结构调整：`cbf550f` — `refactor(blog): collapse repo back to single app`
 - 最近一轮视觉基线：`e334936` — `feat(blog): redesign editorial layout`
+- 最近一轮自动化实现：`90ace85` — `feat(blog): add obsidian import automation scaffold`
 
 ## 当前完成情况
 
@@ -26,11 +27,14 @@
 - 已补齐 Vercel 发布所需的站点 URL 配置回退逻辑
 - 站点对外定位已从 frontend 调整为 AI / agents / applied AI
 - 已产出 Obsidian → blog 自动发布方案 v1，明确 GitHub repo 为主数据源
+- 已落地 Obsidian → blog 导入骨架（扫描 / 候选池 / draft 生成 / GitHub Actions）
+- 已用私有源仓库 `Taz-dingo/obsidian-vault` 完成一轮本地真实验证
 
 ### 进行中
 
 - 移动端和真实内容下的样式复查
 - 首页首屏在真实设备宽度下的层级微调
+- Obsidian 导入规则调优（目录白名单、敏感词、自动发布阈值）
 
 ### 还未完成但明确需要做
 
@@ -39,6 +43,7 @@
 - 移动端更细致的视觉检查（主要剩真实设备复核）
 - 内容策略和写作规范补齐
 - 真实域名确定后的 canonical / OG URL / sharing image 收口
+- 第一次 GitHub Actions 自动导入实跑与日志复核
 
 ## 当前风格判断
 
@@ -57,6 +62,8 @@
 
 - 当前文章数量较少，很多列表页的气质还依赖版式而不是内容密度
 - 视觉系统虽已成型，但还需要更多真实内容验证
+- Obsidian 笔记格式差异很大，导入脚本目前优先保证“能过编译”，内容质量仍需继续调优
+- 当前默认导入规则仍偏通用，未完全贴合真实 vault 目录结构
 
 ## 建议的状态更新节奏
 
