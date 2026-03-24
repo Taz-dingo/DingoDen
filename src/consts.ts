@@ -3,5 +3,5 @@
 
 export const SITE_TITLE = "Dingo's Den";
 export const SITE_DESCRIPTION =
-  "Frontend notes on interface craft, framework pitfalls, and the quieter parts of building for the web.";
+  "Notes on AI systems, agents, applied workflows, and the practical edges of building with modern models.";
 export const SITE_AUTHOR = "Tazdingo";

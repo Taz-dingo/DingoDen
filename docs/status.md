@@ -4,7 +4,7 @@
 
 - 日期：2026-03-24
 - 当前工作目录：`/Users/tazdingo/Dingo Projetcts/dingo-den`
-- 当前聚焦：`single-repo blog`
+- 当前聚焦：`single-repo AI blog`
 - 最新结构调整：`cbf550f` — `refactor(blog): collapse repo back to single app`
 - 最近一轮视觉基线：`e334936` — `feat(blog): redesign editorial layout`
 
@@ -24,6 +24,7 @@
 - 站点基础 metadata 已补齐到页面与文章级别（title / og / twitter / article time）
 - 首页首屏、Header 与文章页完成一轮移动端节奏优化
 - 已补齐 Vercel 发布所需的站点 URL 配置回退逻辑
+- 站点对外定位已从 frontend 调整为 AI / agents / applied AI
 
 ### 进行中
 
