@@ -966,12 +966,27 @@ async function requestAiReview({
     );
   }
 
-  const payload = await response.json();
+  const rawResponse = await response.text();
+  if (!rawResponse.trim()) {
+    throw new Error(
+      `OpenAI review returned empty response body for ${note.sourcePath}.`,
+    );
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(rawResponse);
+  } catch {
+    throw new Error(
+      `OpenAI review returned non-JSON response for ${note.sourcePath}: ${rawResponse.slice(0, 300)}`,
+    );
+  }
+
   const outputText =
     apiStyle === "chat-completions"
       ? readChatCompletionsOutputText(payload)
       : readResponseOutputText(payload);
-  const parsed = parseJsonObject(outputText);
+  const parsed = parseJsonObject(outputText, note.sourcePath);
 
   return {
     decision: normalizeDecision(parsed.decision),
@@ -1051,7 +1066,7 @@ function readResponseOutputText(payload) {
   throw new Error("OpenAI review response did not contain output text.");
 }
 
-function parseJsonObject(rawText) {
+function parseJsonObject(rawText, sourcePath = "unknown note") {
   const normalized = rawText
     .trim()
     .replace(/^```json\s*/i, "")
@@ -1059,7 +1074,27 @@ function parseJsonObject(rawText) {
     .replace(/```$/i, "")
     .trim();
 
-  return JSON.parse(normalized);
+  try {
+    return JSON.parse(normalized);
+  } catch {
+    const extracted = extractJsonObject(normalized);
+    if (extracted) {
+      return JSON.parse(extracted);
+    }
+
+    throw new Error(
+      `OpenAI review returned invalid JSON for ${sourcePath}: ${normalized.slice(0, 300)}`,
+    );
+  }
+}
+
+function extractJsonObject(rawText) {
+  const firstBrace = rawText.indexOf("{");
+  const lastBrace = rawText.lastIndexOf("}");
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    return null;
+  }
+  return rawText.slice(firstBrace, lastBrace + 1);
 }
 
 function readChatCompletionsOutputText(payload) {
