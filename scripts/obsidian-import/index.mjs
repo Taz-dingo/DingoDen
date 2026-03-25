@@ -1079,7 +1079,13 @@ function parseJsonObject(rawText, sourcePath = "unknown note") {
   } catch {
     const extracted = extractJsonObject(normalized);
     if (extracted) {
-      return JSON.parse(extracted);
+      try {
+        return JSON.parse(extracted);
+      } catch {
+        throw new Error(
+          `OpenAI review returned malformed JSON for ${sourcePath}: ${extracted.slice(0, 300)}`,
+        );
+      }
     }
 
     throw new Error(
