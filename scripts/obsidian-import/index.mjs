@@ -950,42 +950,20 @@ async function requestAiReview({
     excerpt,
   ].join("\n\n");
 
-  const response = await requestCompatibleOpenAiApi({
+  const result = await requestAiReviewWithFallback({
     apiKey,
     model,
     baseUrl,
     apiStyle,
     systemPrompt,
     userPrompt,
+    sourcePath: note.sourcePath,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `OpenAI review request failed (${response.status}): ${errorText.slice(0, 300)}`,
-    );
-  }
-
-  const rawResponse = await response.text();
-  if (!rawResponse.trim()) {
-    throw new Error(
-      `OpenAI review returned empty response body for ${note.sourcePath}.`,
-    );
-  }
-
-  let payload;
-  try {
-    payload = JSON.parse(rawResponse);
-  } catch {
-    throw new Error(
-      `OpenAI review returned non-JSON response for ${note.sourcePath}: ${rawResponse.slice(0, 300)}`,
-    );
-  }
-
   const outputText =
-    apiStyle === "chat-completions"
-      ? readChatCompletionsOutputText(payload)
-      : readResponseOutputText(payload);
+    result.apiStyle === "chat-completions"
+      ? readChatCompletionsOutputText(result.payload)
+      : readResponseOutputText(result.payload);
   const parsed = parseJsonObject(outputText, note.sourcePath);
 
   return {
@@ -997,6 +975,72 @@ async function requestAiReview({
     reasons: normalizeStringArray(parsed.reasons),
     risks: normalizeStringArray(parsed.risks),
   };
+}
+
+async function requestAiReviewWithFallback({
+  apiKey,
+  model,
+  baseUrl,
+  apiStyle,
+  systemPrompt,
+  userPrompt,
+  sourcePath,
+}) {
+  const attemptedStyles =
+    apiStyle === "responses" ? ["responses", "chat-completions"] : [apiStyle];
+  const failures = [];
+
+  for (const style of attemptedStyles) {
+    try {
+      const response = await requestCompatibleOpenAiApi({
+        apiKey,
+        model,
+        baseUrl,
+        apiStyle: style,
+        systemPrompt,
+        userPrompt,
+      });
+      const payload = await readApiPayload(response, style, sourcePath);
+      return { apiStyle: style, payload };
+    } catch (error) {
+      failures.push(`${style}: ${error.message}`);
+    }
+  }
+
+  throw new Error(
+    `OpenAI review failed for ${sourcePath}. ${failures.join(" | ")}`,
+  );
+}
+
+async function readApiPayload(response, apiStyle, sourcePath) {
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `request failed (${response.status}): ${errorText.slice(0, 300)}`,
+    );
+  }
+
+  const rawResponse = await response.text();
+  if (!rawResponse.trim()) {
+    throw new Error(`empty response body for ${sourcePath}`);
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(rawResponse);
+  } catch {
+    throw new Error(
+      `non-JSON response for ${sourcePath}: ${rawResponse.slice(0, 300)}`,
+    );
+  }
+
+  if (apiStyle === "chat-completions") {
+    readChatCompletionsOutputText(payload);
+  } else {
+    readResponseOutputText(payload);
+  }
+
+  return payload;
 }
 
 async function requestCompatibleOpenAiApi({
