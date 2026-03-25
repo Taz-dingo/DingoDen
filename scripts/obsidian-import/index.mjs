@@ -295,6 +295,7 @@ async function buildCandidates(
       classification: metrics.classification,
       riskLevel: metrics.riskLevel,
       reasons: metrics.reasons,
+      signals: metrics.signals,
       imported: Boolean(existingState?.blogSlug),
       blogSlug: existingState?.blogSlug ?? null,
       contentHash,
@@ -346,15 +347,38 @@ function parseFrontmatter(rawContent) {
 function scoreNote(relativePath, title, body, frontmatter, config) {
   const normalizedPath = normalizePath(relativePath);
   const reasons = [];
+  const matchedIncludeDirectories = config.filters.includeDirectories.filter(
+    (rule) => matchesDirectoryRule(normalizedPath, rule),
+  );
+  const signals = {
+    matchedIncludeDirectories,
+    matchedExcludeDirectories: config.filters.excludeDirectories.filter(
+      (rule) => matchesDirectoryRule(normalizedPath, rule),
+    ),
+    wordCount: countWords(body),
+    headingCount: (body.match(/^##?\s+/gm) ?? []).length,
+    bulletCount: (body.match(/^[-*]\s+/gm) ?? []).length,
+    codeBlockCount: (body.match(/```/g) ?? []).length / 2,
+    hasPositiveKeywords: false,
+    hasNegativeKeywords: false,
+    titleLooksPublishable: false,
+    titleLooksScratch: false,
+    containsArticleSignals: false,
+    taskListHeavy: false,
+    referenceHeavy: false,
+    logHeavy: false,
+    blockedKeywordHit: false,
+    sensitivePatternHit: false,
+  };
   let score = 0;
   let riskPoints = 0;
 
-  if (matchesPathPrefix(normalizedPath, config.filters.includeDirectories)) {
+  if (signals.matchedIncludeDirectories.length > 0) {
     score += 30;
     reasons.push("inside include directory");
   }
 
-  if (matchesPathPrefix(normalizedPath, config.filters.excludeDirectories)) {
+  if (signals.matchedExcludeDirectories.length > 0) {
     return {
       score: -100,
       classification: "blocked",
@@ -365,7 +389,7 @@ function scoreNote(relativePath, title, body, frontmatter, config) {
 
   const lowerBody = body.toLowerCase();
   const normalizedTitle = String(title ?? "").trim();
-  const wordCount = countWords(body);
+  const wordCount = signals.wordCount;
   if (wordCount >= config.scoring.minWordCount) {
     score += 15;
     reasons.push("meets minimum word count");
@@ -374,70 +398,89 @@ function scoreNote(relativePath, title, body, frontmatter, config) {
     reasons.push("too short");
   }
 
-  const headingCount = (body.match(/^##?\s+/gm) ?? []).length;
+  const headingCount = signals.headingCount;
   if (headingCount >= 2) {
     score += 15;
     reasons.push("has structure");
   }
 
-  const bulletCount = (body.match(/^[-*]\s+/gm) ?? []).length;
+  const bulletCount = signals.bulletCount;
   if (bulletCount >= 3) {
     score += 8;
     reasons.push("contains structured lists");
   }
 
-  const codeBlockCount = (body.match(/```/g) ?? []).length / 2;
+  const codeBlockCount = signals.codeBlockCount;
   if (codeBlockCount >= 1) {
     score += 6;
     reasons.push("contains code or examples");
   }
 
-  if (containsAny(lowerBody, config.scoring.positiveKeywords)) {
+  signals.hasPositiveKeywords = containsAny(
+    lowerBody,
+    config.scoring.positiveKeywords,
+  );
+  if (signals.hasPositiveKeywords) {
     score += 18;
     reasons.push("contains topic keywords");
   }
 
-  if (containsAny(lowerBody, config.scoring.negativeKeywords)) {
+  signals.hasNegativeKeywords = containsAny(
+    lowerBody,
+    config.scoring.negativeKeywords,
+  );
+  if (signals.hasNegativeKeywords) {
     score -= 22;
     reasons.push("contains low-value keywords");
   }
 
-  if (looksLikeArticleTitle(normalizedTitle)) {
+  signals.titleLooksPublishable = looksLikeArticleTitle(normalizedTitle);
+  if (signals.titleLooksPublishable) {
     score += 10;
     reasons.push("title looks publishable");
   }
 
-  if (looksLikeScratchTitle(normalizedTitle)) {
+  signals.titleLooksScratch = looksLikeScratchTitle(normalizedTitle);
+  if (signals.titleLooksScratch) {
     score -= 18;
     reasons.push("title looks like scratch note");
   }
 
-  if (containsArticleSignals(lowerBody)) {
+  signals.containsArticleSignals = containsArticleSignals(lowerBody);
+  if (signals.containsArticleSignals) {
     score += 10;
     reasons.push("contains article-style signals");
   }
 
-  if (hasHeavyTaskList(body)) {
+  signals.taskListHeavy = hasHeavyTaskList(body);
+  if (signals.taskListHeavy) {
     score -= 18;
     reasons.push("task list heavy");
   }
 
-  if (hasHeavyReferenceDensity(body)) {
+  signals.referenceHeavy = hasHeavyReferenceDensity(body);
+  if (signals.referenceHeavy) {
     score -= 14;
     reasons.push("reference or excerpt heavy");
   }
 
-  if (hasHeavyLogDensity(body)) {
+  signals.logHeavy = hasHeavyLogDensity(body);
+  if (signals.logHeavy) {
     score -= 18;
     reasons.push("log or setup heavy");
   }
 
-  if (containsAny(lowerBody, config.safety.blockedKeywords)) {
+  signals.blockedKeywordHit = containsAny(
+    lowerBody,
+    config.safety.blockedKeywords,
+  );
+  if (signals.blockedKeywordHit) {
     riskPoints += 100;
     reasons.push("contains blocked keywords");
   }
 
-  if (containsSensitivePattern(body)) {
+  signals.sensitivePatternHit = containsSensitivePattern(body);
+  if (signals.sensitivePatternHit) {
     riskPoints += 60;
     reasons.push("contains sensitive pattern");
   }
@@ -461,7 +504,13 @@ function scoreNote(relativePath, title, body, frontmatter, config) {
   const riskLevel =
     riskPoints >= 100 ? "high" : riskPoints >= 40 ? "medium" : "low";
 
-  return { score: adjustedScore, classification, riskLevel, reasons };
+  return {
+    score: adjustedScore,
+    classification,
+    riskLevel,
+    reasons,
+    signals,
+  };
 }
 
 function containsSensitivePattern(body) {
@@ -1171,10 +1220,6 @@ async function pathExists(targetPath) {
   } catch {
     return false;
   }
-}
-
-function matchesPathPrefix(target, prefixes = []) {
-  return prefixes.some((prefix) => matchesDirectoryRule(target, prefix));
 }
 
 function matchesDirectoryRule(target, rule) {
