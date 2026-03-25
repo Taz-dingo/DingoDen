@@ -258,6 +258,7 @@ async function buildCandidates(
     const cleanedBody = cleanObsidianMarkdown(parsed.body);
     const metrics = scoreNote(
       relativePath,
+      title,
       parsed.body,
       parsed.frontmatter,
       config,
@@ -342,7 +343,7 @@ function parseFrontmatter(rawContent) {
   return { frontmatter, body };
 }
 
-function scoreNote(relativePath, body, frontmatter, config) {
+function scoreNote(relativePath, title, body, frontmatter, config) {
   const normalizedPath = normalizePath(relativePath);
   const reasons = [];
   let score = 0;
@@ -363,6 +364,7 @@ function scoreNote(relativePath, body, frontmatter, config) {
   }
 
   const lowerBody = body.toLowerCase();
+  const normalizedTitle = String(title ?? "").trim();
   const wordCount = countWords(body);
   if (wordCount >= config.scoring.minWordCount) {
     score += 15;
@@ -398,6 +400,36 @@ function scoreNote(relativePath, body, frontmatter, config) {
   if (containsAny(lowerBody, config.scoring.negativeKeywords)) {
     score -= 22;
     reasons.push("contains low-value keywords");
+  }
+
+  if (looksLikeArticleTitle(normalizedTitle)) {
+    score += 10;
+    reasons.push("title looks publishable");
+  }
+
+  if (looksLikeScratchTitle(normalizedTitle)) {
+    score -= 18;
+    reasons.push("title looks like scratch note");
+  }
+
+  if (containsArticleSignals(lowerBody)) {
+    score += 10;
+    reasons.push("contains article-style signals");
+  }
+
+  if (hasHeavyTaskList(body)) {
+    score -= 18;
+    reasons.push("task list heavy");
+  }
+
+  if (hasHeavyReferenceDensity(body)) {
+    score -= 14;
+    reasons.push("reference or excerpt heavy");
+  }
+
+  if (hasHeavyLogDensity(body)) {
+    score -= 18;
+    reasons.push("log or setup heavy");
   }
 
   if (containsAny(lowerBody, config.safety.blockedKeywords)) {
@@ -464,6 +496,72 @@ function countWords(body) {
     ) ?? []
   ).length;
   return latinWordCount + Math.ceil(cjkCharCount / 2);
+}
+
+function looksLikeArticleTitle(title) {
+  if (!title) return false;
+  if (/^\d{4}[-/]?\d{2}[-/]?\d{2}$/.test(title)) return false;
+  if (/^\d+$/.test(title)) return false;
+  return title.length >= 6 && !looksLikeScratchTitle(title);
+}
+
+function looksLikeScratchTitle(title) {
+  if (!title) return true;
+  return (
+    /^\d+$/.test(title) ||
+    /^week\d+$/i.test(title) ||
+    /^todo$/i.test(title) ||
+    /^temp$/i.test(title) ||
+    /^draft$/i.test(title) ||
+    title.length <= 4
+  );
+}
+
+function containsArticleSignals(lowerBody) {
+  return containsAny(lowerBody, [
+    "总结",
+    "结论",
+    "复盘",
+    "对比",
+    "为什么",
+    "经验",
+    "实践",
+    "取舍",
+    "tradeoff",
+    "takeaway",
+    "in practice",
+  ]);
+}
+
+function hasHeavyTaskList(body) {
+  const checkboxCount = (body.match(/^\s*- \[[ xX]\]\s+/gm) ?? []).length;
+  const lineCount = Math.max(body.split("\n").length, 1);
+  return checkboxCount >= 4 || checkboxCount / lineCount > 0.12;
+}
+
+function hasHeavyReferenceDensity(body) {
+  const quoteCount = (body.match(/^>\s+/gm) ?? []).length;
+  const linkCount = (body.match(/https?:\/\//g) ?? []).length;
+  const lineCount = Math.max(body.split("\n").length, 1);
+  return (
+    quoteCount >= 8 ||
+    linkCount >= 8 ||
+    (quoteCount + linkCount) / lineCount > 0.2
+  );
+}
+
+function hasHeavyLogDensity(body) {
+  const lowerBody = body.toLowerCase();
+  const shellPromptCount = (body.match(/^(?:\$|#)\s+/gm) ?? []).length;
+  const errorCount = (
+    lowerBody.match(/error|exception|traceback|stack trace|fatal/g) ?? []
+  ).length;
+  const installCount = (
+    lowerBody.match(
+      /npm install|pnpm install|yarn install|pip install|conda install|brew install|apt install/g,
+    ) ?? []
+  ).length;
+  return shellPromptCount >= 6 || errorCount >= 4 || installCount >= 3;
 }
 
 function deriveTitle(relativePath, frontmatter, body) {
@@ -1076,9 +1174,25 @@ async function pathExists(targetPath) {
 }
 
 function matchesPathPrefix(target, prefixes = []) {
-  return prefixes.some(
-    (prefix) => target === prefix || target.startsWith(`${prefix}/`),
+  return prefixes.some((prefix) => matchesDirectoryRule(target, prefix));
+}
+
+function matchesDirectoryRule(target, rule) {
+  const normalizedRule = normalizePath(String(rule ?? "").trim()).replace(
+    /^\/+|\/+$/g,
+    "",
   );
+  if (!normalizedRule) return false;
+  if (target === normalizedRule) return true;
+  if (target.startsWith(`${normalizedRule}/`)) return true;
+  if (target.includes(`/${normalizedRule}/`)) return true;
+
+  if (!normalizedRule.includes("/")) {
+    const segments = target.split("/");
+    return segments.includes(normalizedRule);
+  }
+
+  return false;
 }
 
 function normalizePath(value) {
