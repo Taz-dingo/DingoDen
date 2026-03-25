@@ -1054,6 +1054,7 @@ async function requestCompatibleOpenAiApi({
 }) {
   const headers = {
     Authorization: `Bearer ${apiKey}`,
+    Accept: "application/json",
     "Content-Type": "application/json",
   };
 
@@ -1076,16 +1077,9 @@ async function requestCompatibleOpenAiApi({
     headers,
     body: JSON.stringify({
       model,
-      input: [
-        {
-          role: "system",
-          content: [{ type: "input_text", text: systemPrompt }],
-        },
-        {
-          role: "user",
-          content: [{ type: "input_text", text: userPrompt }],
-        },
-      ],
+      instructions: systemPrompt,
+      input: userPrompt,
+      max_output_tokens: 500,
     }),
   });
 }
