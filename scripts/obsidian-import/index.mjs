@@ -940,10 +940,12 @@ async function requestAiReview({
     "reasons and risks must be arrays of short strings.",
     "Prefer reject when the note is mostly setup logs, command scraps, book excerpts, TODOs, or private context.",
     "Prefer revise when the idea is useful but the title, structure, or prose needs real editorial work.",
+    "Heuristic signals are weak hints, not ground truth. Use them to assist judgment rather than override the content.",
     `Source path: ${note.sourcePath}`,
     `Current title: ${note.title}`,
     `Heuristic classification: ${note.classification}`,
     `Heuristic reasons: ${(note.reasons ?? []).join(", ")}`,
+    `Heuristic signals: ${JSON.stringify(note.signals ?? {}, null, 2)}`,
     "Excerpt:",
     excerpt,
   ].join("\n\n");
