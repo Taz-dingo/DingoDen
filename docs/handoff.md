@@ -94,6 +94,7 @@
 - 新增 GitHub Actions workflow：`Obsidian Import`
 - 默认私有源仓库已指向：`Taz-dingo/obsidian-vault`
 - 已在本地用真实私有 vault 完成一轮 backfill / draft / build 验证
+- 已完成第一次 GitHub Actions 线上实跑，并生成自动导入 commit：`8b7aff0`
 
 受影响的关键文件：
 
@@ -168,7 +169,7 @@
 ### 第一优先级
 
 - 用真实 vault 目录更新导入配置，收紧扫描白名单
-- 在 GitHub Actions 中完成第一次 `Obsidian Import` 实跑
+- 复核第一次 `Obsidian Import` 线上导入结果，清理不合适文章
 
 ### 第二优先级
 

@@ -36,8 +36,9 @@
 - [x] 为 Vercel 部署补齐 `site` URL 回退配置
 - [ ] 梳理首页是否需要“精选文章 / 最新文章”更明确的关系
 - [ ] 用真实 vault 目录更新 `config/obsidian-import.config.json`
-- [ ] 完成第一次 GitHub Actions `Obsidian Import` 实跑
+- [x] 完成第一次 GitHub Actions `Obsidian Import` 实跑
 - [ ] 收敛敏感词、黑名单目录和自动发布阈值
+- [ ] 复核第一次线上导入结果并清理不合适文章
 
 ## P3 — 后续储备
 

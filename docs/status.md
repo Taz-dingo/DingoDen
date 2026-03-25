@@ -8,6 +8,7 @@
 - 最新结构调整：`cbf550f` — `refactor(blog): collapse repo back to single app`
 - 最近一轮视觉基线：`e334936` — `feat(blog): redesign editorial layout`
 - 最近一轮自动化实现：`90ace85` — `feat(blog): add obsidian import automation scaffold`
+- 最近一轮自动导入结果：`8b7aff0` — `chore(blog): import obsidian notes`
 
 ## 当前完成情况
 
@@ -29,6 +30,7 @@
 - 已产出 Obsidian → blog 自动发布方案 v1，明确 GitHub repo 为主数据源
 - 已落地 Obsidian → blog 导入骨架（扫描 / 候选池 / draft 生成 / GitHub Actions）
 - 已用私有源仓库 `Taz-dingo/obsidian-vault` 完成一轮本地真实验证
+- 已完成第一次 GitHub Actions `Obsidian Import` 线上实跑，并成功自动提交导入结果
 
 ### 进行中
 
@@ -43,7 +45,7 @@
 - 移动端更细致的视觉检查（主要剩真实设备复核）
 - 内容策略和写作规范补齐
 - 真实域名确定后的 canonical / OG URL / sharing image 收口
-- 第一次 GitHub Actions 自动导入实跑与日志复核
+- 第一次线上导入结果复核与规则收敛
 
 ## 当前风格判断
 
@@ -64,6 +66,7 @@
 - 视觉系统虽已成型，但还需要更多真实内容验证
 - Obsidian 笔记格式差异很大，导入脚本目前优先保证“能过编译”，内容质量仍需继续调优
 - 当前默认导入规则仍偏通用，未完全贴合真实 vault 目录结构
+- 第一次线上导入已经成功，但导入质量仍需要人工复核并逐步收紧规则
 
 ## 建议的状态更新节奏
 
