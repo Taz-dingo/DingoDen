@@ -81,20 +81,19 @@
 - `docs/tasks.md`
 - `docs/handoff.md`（当前文件）
 
-### 4. Obsidian 自动导入骨架已落地
+### 4. Obsidian 导入链路已进入保守发布模式
 
 已提交 commit：
 
-- `90ace85` — `feat(blog): add obsidian import automation scaffold`
+- `acd78df` — `feat(blog): add obsidian import automation scaffold`
+- `433f786` — `docs(blog): record successful obsidian import run`
 
-这一轮已经完成：
+这一轮之后需要把导入链路理解为：
 
-- 新增导入脚本骨架：扫描 / 候选池 / draft 生成
-- 新增导入配置与状态缓存
-- 新增 GitHub Actions workflow：`Obsidian Import`
-- 默认私有源仓库已指向：`Taz-dingo/obsidian-vault`
-- 已在本地用真实私有 vault 完成一轮 backfill / draft / build 验证
-- 已完成第一次 GitHub Actions 线上实跑，并生成自动导入 commit：`8b7aff0`
+- 增量扫描 → 候选池 → AI 审查 → 只生成 AI `approve` 的 draft
+- 第一层规则筛选的职责是“召回和排序”，不是最终发布判定
+- 当前已经支持第三方 OpenAI-compatible `Responses API`
+- 当前没有稳定 `sourceId`，去重应按 `sourcePath + contentHash` 理解，并继续补 `reviewHash / renderHash / rename heuristic`
 
 受影响的关键文件：
 
@@ -112,7 +111,6 @@
 如果你是新 session，先默认按“一个仓库就是一个 blog 项目”来理解，不再需要额外切到 `apps/blog` 或依赖独立 worktree。
 
 此前遗留的 `apps/kana` 文档已不再属于当前项目范围，可直接忽略或清理。
-
 
 ## 当前最重要的文件
 
@@ -221,6 +219,7 @@ OBSIDIAN_SOURCE_PATH="/你的/obsidian/vault" pnpm obsidian:drafts
 如果使用 GitHub Actions，当前需要在 **blog 仓库** 中配置 secret：
 
 - `OBSIDIAN_SOURCE_TOKEN`
+- `OPENAI_API_KEY`
 
 ## 交接结论
 
@@ -228,5 +227,5 @@ OBSIDIAN_SOURCE_PATH="/你的/obsidian/vault" pnpm obsidian:drafts
 
 - 方向已经有了
 - 第一轮视觉改版已经落地
-- Obsidian 自动导入骨架已经写好并验证过一轮
-- 接下来重点是“把导入规则调准 + 跑第一次线上自动导入”
+- Obsidian 自动导入已经不再是“扫描即发布”，而是“候选池 + AI 审查”
+- 接下来重点是“把粗筛调成靠谱的审查排序器 + 补无 sourceId 去重机制”

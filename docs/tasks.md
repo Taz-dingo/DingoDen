@@ -26,6 +26,8 @@
 - [x] 建立 blog 项目文档结构
 - [x] 完成首页 / 文章页 / 归档页第一轮视觉改版
 - [~] 将 Obsidian 自动导入规则调整到贴合真实 vault 结构
+- [ ] 把第一层粗筛改成“候选召回 + 审查优先级排序”，降低低质笔记占用 AI 审查预算
+- [ ] 在无 `sourceId` 条件下补 `contentHash / reviewHash / renderHash` 去重方案
 
 ## P2 — 下一轮
 
@@ -37,8 +39,9 @@
 - [ ] 梳理首页是否需要“精选文章 / 最新文章”更明确的关系
 - [ ] 用真实 vault 目录更新 `config/obsidian-import.config.json`
 - [x] 完成第一次 GitHub Actions `Obsidian Import` 实跑
-- [ ] 收敛敏感词、黑名单目录和自动发布阈值
-- [ ] 复核第一次线上导入结果并清理不合适文章
+- [~] 收敛敏感词、黑名单目录和自动发布阈值
+- [ ] 加 rename heuristic，减少改名或挪目录后的重复抓取
+- [ ] 为 AI `revise` 结果建立待处理队列，而不是直接丢在候选池里
 
 ## P3 — 后续储备
 

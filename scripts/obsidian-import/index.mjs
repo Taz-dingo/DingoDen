@@ -13,11 +13,13 @@ const statePath = path.join(rootDir, "data", "obsidian-import-state.json");
 const importedRoot = path.join(rootDir, "src", "content", "blog", "imported");
 
 const command = process.argv[2] ?? "run";
+const defaultOpenAiBaseUrl = "https://api.openai.com/v1";
 
 async function main() {
   const config = await readJson(configPath);
   const state = await readJson(statePath);
   const sourceRoot = await resolveSourceRoot(config);
+  const aiReviewConfig = resolveAiReviewConfig(config);
 
   if (!sourceRoot) {
     throw new Error(
@@ -78,10 +80,29 @@ async function main() {
       sourceRoot,
       config,
       state,
+      aiReviewConfig,
     );
     await writeJson(statePath, result.state);
     console.log(
       `Draft build complete: ${result.generatedCount} files written.`,
+    );
+    return;
+  }
+
+  if (command === "review-ai") {
+    const candidates = await readJson(candidatesPath);
+    const result = await reviewCandidatesWithAi(
+      candidates.items ?? [],
+      sourceRoot,
+      config,
+      aiReviewConfig,
+    );
+    await writeJson(candidatesPath, {
+      generatedAt: new Date().toISOString(),
+      items: result.items,
+    });
+    console.log(
+      `AI review complete: ${result.reviewedCount} notes reviewed, ${result.skippedCount} left pending.`,
     );
     return;
   }
@@ -97,11 +118,23 @@ async function main() {
     );
     const existing = await readJson(candidatesPath);
     const merged = mergeCandidates(existing.items ?? [], candidates);
-    const result = await buildDrafts(merged, sourceRoot, config, state);
+    const reviewResult = await reviewCandidatesWithAi(
+      merged,
+      sourceRoot,
+      config,
+      aiReviewConfig,
+    );
+    const result = await buildDrafts(
+      reviewResult.items,
+      sourceRoot,
+      config,
+      state,
+      aiReviewConfig,
+    );
     const headCommit = await getHeadCommit(sourceRoot);
     await writeJson(candidatesPath, {
       generatedAt: new Date().toISOString(),
-      items: merged,
+      items: reviewResult.items,
     });
     await writeJson(statePath, {
       ...result.state,
@@ -109,7 +142,7 @@ async function main() {
       lastIncrementalScanAt: new Date().toISOString(),
     });
     console.log(
-      `Run complete: ${candidates.length} candidates refreshed, ${result.generatedCount} drafts written.`,
+      `Run complete: ${candidates.length} candidates refreshed, ${reviewResult.reviewedCount} AI-reviewed, ${result.generatedCount} drafts written.`,
     );
     return;
   }
@@ -391,7 +424,13 @@ function containsAny(body, keywords) {
 }
 
 function countWords(body) {
-  return body.split(/\s+/).filter(Boolean).length;
+  const latinWordCount = (body.match(/[A-Za-z0-9_]+/g) ?? []).length;
+  const cjkCharCount = (
+    body.match(
+      /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu,
+    ) ?? []
+  ).length;
+  return latinWordCount + Math.ceil(cjkCharCount / 2);
 }
 
 function deriveTitle(relativePath, frontmatter, body) {
@@ -417,7 +456,13 @@ function mergeCandidates(existing, incoming) {
   return [...map.values()].sort((left, right) => right.score - left.score);
 }
 
-async function buildDrafts(candidates, sourceRoot, config, state) {
+async function buildDrafts(
+  candidates,
+  sourceRoot,
+  config,
+  state,
+  aiReviewConfig,
+) {
   const nextState = {
     ...state,
     notes: { ...(state.notes ?? {}) },
@@ -427,11 +472,7 @@ async function buildDrafts(candidates, sourceRoot, config, state) {
   await fs.mkdir(importedRoot, { recursive: true });
 
   for (const candidate of candidates) {
-    if (
-      !config.generation.allowedClassifications.includes(
-        candidate.classification,
-      )
-    ) {
+    if (!shouldGenerateCandidate(candidate, config, aiReviewConfig)) {
       continue;
     }
 
@@ -449,10 +490,13 @@ async function buildDrafts(candidates, sourceRoot, config, state) {
       continue;
     }
 
-    const slug = candidate.blogSlug ?? slugify(candidate.title);
+    const resolvedTitle = resolvePublishedTitle(candidate);
+    const slug =
+      candidate.blogSlug ??
+      slugify(candidate.aiReview?.publicSlug?.trim() || resolvedTitle);
     const targetDir = path.join(importedRoot, slug);
     const targetFile = path.join(targetDir, "index.mdx");
-    const description = buildDescription(cleanedBody, candidate.title);
+    const description = buildDescription(cleanedBody, resolvedTitle);
     const today = new Date().toISOString().slice(0, 10);
 
     await fs.mkdir(targetDir, { recursive: true });
@@ -460,7 +504,7 @@ async function buildDrafts(candidates, sourceRoot, config, state) {
       targetFile,
       [
         "---",
-        `title: "${escapeYaml(candidate.title)}"`,
+        `title: "${escapeYaml(resolvedTitle)}"`,
         `description: "${escapeYaml(description)}"`,
         `pubDate: "${today}"`,
         `updatedDate: "${today}"`,
@@ -490,6 +534,8 @@ async function buildDrafts(candidates, sourceRoot, config, state) {
 
 function cleanObsidianMarkdown(body) {
   return body
+    .replace(/^TAG:\s+.*$/gim, "")
+    .replace(/^DECK:\s+.*$/gim, "")
     .replace(/^>\s*\[!.*?\]\s*/gm, "> ")
     .replace(/^!\[\[.*?\]\]\s*$/gm, "")
     .replace(/!\[\[(.*?)\]\]/g, "")
@@ -537,6 +583,356 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 
   return normalized || `imported-${Date.now()}`;
+}
+
+function resolveAiReviewConfig(config) {
+  const configured = config.aiReview ?? {};
+  return {
+    enabled: readBooleanEnv("AI_REVIEW_ENABLED", configured.enabled ?? false),
+    model: process.env.OPENAI_MODEL ?? configured.model ?? "gpt-5.4-mini",
+    baseUrl:
+      process.env.OPENAI_BASE_URL ?? configured.baseUrl ?? defaultOpenAiBaseUrl,
+    apiStyle: normalizeApiStyle(
+      process.env.OPENAI_API_STYLE ?? configured.apiStyle ?? "responses",
+    ),
+    maxCandidatesPerRun: readNumberEnv(
+      "AI_REVIEW_MAX_CANDIDATES",
+      configured.maxCandidatesPerRun ?? 8,
+    ),
+    maxExcerptChars: readNumberEnv(
+      "AI_REVIEW_MAX_EXCERPT_CHARS",
+      configured.maxExcerptChars ?? 12000,
+    ),
+    reviewClassifications: configured.reviewClassifications ?? [
+      "candidate",
+      "strong-candidate",
+    ],
+    allowedDecisions: configured.allowedDecisions ?? ["approve"],
+  };
+}
+
+async function reviewCandidatesWithAi(
+  candidates,
+  sourceRoot,
+  config,
+  aiReviewConfig,
+) {
+  if (!aiReviewConfig.enabled) {
+    return { items: candidates, reviewedCount: 0, skippedCount: 0 };
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("AI review is enabled but OPENAI_API_KEY is missing.");
+  }
+
+  const items = [...candidates];
+  const queue = selectCandidatesForAiReview(items, aiReviewConfig).slice(
+    0,
+    aiReviewConfig.maxCandidatesPerRun,
+  );
+
+  for (const entry of queue) {
+    const sourcePath = path.join(sourceRoot, entry.sourcePath);
+    let rawContent;
+    try {
+      rawContent = await fs.readFile(sourcePath, "utf8");
+    } catch {
+      continue;
+    }
+
+    const parsed = parseFrontmatter(rawContent);
+    const cleanedBody = cleanObsidianMarkdown(parsed.body);
+    const excerpt = cleanedBody.slice(0, aiReviewConfig.maxExcerptChars);
+    const aiReview = await requestAiReview({
+      apiKey,
+      model: aiReviewConfig.model,
+      baseUrl: aiReviewConfig.baseUrl,
+      apiStyle: aiReviewConfig.apiStyle,
+      note: entry,
+      excerpt,
+    });
+
+    entry.aiReview = {
+      ...aiReview,
+      model: aiReviewConfig.model,
+      reviewedAt: new Date().toISOString(),
+      contentHash: entry.contentHash,
+    };
+  }
+
+  return {
+    items,
+    reviewedCount: queue.length,
+    skippedCount: Math.max(
+      selectCandidatesForAiReview(items, aiReviewConfig).length,
+      0,
+    ),
+  };
+}
+
+function selectCandidatesForAiReview(candidates, aiReviewConfig) {
+  return candidates
+    .filter((candidate) => !candidate.imported)
+    .filter((candidate) =>
+      aiReviewConfig.reviewClassifications.includes(candidate.classification),
+    )
+    .filter((candidate) => {
+      const existingReview = candidate.aiReview;
+      return (
+        !existingReview || existingReview.contentHash !== candidate.contentHash
+      );
+    })
+    .sort((left, right) => {
+      const scoreDiff = right.score - left.score;
+      if (scoreDiff !== 0) return scoreDiff;
+      return (right.lastModifiedAt ?? "").localeCompare(
+        left.lastModifiedAt ?? "",
+      );
+    });
+}
+
+async function requestAiReview({
+  apiKey,
+  model,
+  baseUrl,
+  apiStyle,
+  note,
+  excerpt,
+}) {
+  const systemPrompt = [
+    "You review Obsidian notes for publication on a public engineering blog.",
+    "Be conservative.",
+    "Approve only if the note is publishable with light cleanup.",
+    "Use revise if the core idea is strong but still reads like raw notes.",
+    "Use reject for private, internal, overly fragmentary, context-dependent, or low-value notes.",
+    "Return raw JSON only.",
+  ].join(" ");
+
+  const userPrompt = [
+    "Decide whether this note should be published.",
+    "Return a JSON object with keys: decision, confidence, summary, publicTitle, publicSlug, reasons, risks.",
+    'decision must be one of "approve", "revise", "reject".',
+    "confidence must be a number between 0 and 1.",
+    "publicSlug must be short lowercase kebab-case in English.",
+    "reasons and risks must be arrays of short strings.",
+    "Prefer reject when the note is mostly setup logs, command scraps, book excerpts, TODOs, or private context.",
+    "Prefer revise when the idea is useful but the title, structure, or prose needs real editorial work.",
+    `Source path: ${note.sourcePath}`,
+    `Current title: ${note.title}`,
+    `Heuristic classification: ${note.classification}`,
+    `Heuristic reasons: ${(note.reasons ?? []).join(", ")}`,
+    "Excerpt:",
+    excerpt,
+  ].join("\n\n");
+
+  const response = await requestCompatibleOpenAiApi({
+    apiKey,
+    model,
+    baseUrl,
+    apiStyle,
+    systemPrompt,
+    userPrompt,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `OpenAI review request failed (${response.status}): ${errorText.slice(0, 300)}`,
+    );
+  }
+
+  const payload = await response.json();
+  const outputText =
+    apiStyle === "chat-completions"
+      ? readChatCompletionsOutputText(payload)
+      : readResponseOutputText(payload);
+  const parsed = parseJsonObject(outputText);
+
+  return {
+    decision: normalizeDecision(parsed.decision),
+    confidence: clampConfidence(parsed.confidence),
+    summary: String(parsed.summary ?? "").trim(),
+    publicTitle: String(parsed.publicTitle ?? note.title).trim(),
+    publicSlug: String(parsed.publicSlug ?? note.title).trim(),
+    reasons: normalizeStringArray(parsed.reasons),
+    risks: normalizeStringArray(parsed.risks),
+  };
+}
+
+async function requestCompatibleOpenAiApi({
+  apiKey,
+  model,
+  baseUrl,
+  apiStyle,
+  systemPrompt,
+  userPrompt,
+}) {
+  const headers = {
+    Authorization: `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+  };
+
+  if (apiStyle === "chat-completions") {
+    return fetch(buildOpenAiApiUrl(baseUrl, "chat/completions"), {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
+  }
+
+  return fetch(buildOpenAiApiUrl(baseUrl, "responses"), {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model,
+      input: [
+        {
+          role: "system",
+          content: [{ type: "input_text", text: systemPrompt }],
+        },
+        {
+          role: "user",
+          content: [{ type: "input_text", text: userPrompt }],
+        },
+      ],
+    }),
+  });
+}
+
+function buildOpenAiApiUrl(baseUrl, endpointPath) {
+  return `${String(baseUrl).replace(/\/+$/, "")}/${endpointPath}`;
+}
+
+function readResponseOutputText(payload) {
+  if (typeof payload.output_text === "string" && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  const contentItems = payload.output ?? [];
+  for (const item of contentItems) {
+    for (const content of item.content ?? []) {
+      if (typeof content.text === "string" && content.text.trim()) {
+        return content.text.trim();
+      }
+    }
+  }
+
+  throw new Error("OpenAI review response did not contain output text.");
+}
+
+function parseJsonObject(rawText) {
+  const normalized = rawText
+    .trim()
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/```$/i, "")
+    .trim();
+
+  return JSON.parse(normalized);
+}
+
+function readChatCompletionsOutputText(payload) {
+  const firstChoice = payload.choices?.[0]?.message?.content;
+
+  if (typeof firstChoice === "string" && firstChoice.trim()) {
+    return firstChoice.trim();
+  }
+
+  if (Array.isArray(firstChoice)) {
+    const text = firstChoice
+      .map((item) => (typeof item?.text === "string" ? item.text : ""))
+      .join("")
+      .trim();
+    if (text) return text;
+  }
+
+  throw new Error("OpenAI chat completions response did not contain content.");
+}
+
+function normalizeApiStyle(value) {
+  const normalized = String(value ?? "")
+    .trim()
+    .toLowerCase();
+  if (
+    ["responses", "chat-completions", "chat_completions"].includes(normalized)
+  ) {
+    return normalized.replace("chat_completions", "chat-completions");
+  }
+  return "responses";
+}
+
+function normalizeDecision(value) {
+  const normalized = String(value ?? "")
+    .trim()
+    .toLowerCase();
+  if (["approve", "revise", "reject"].includes(normalized)) {
+    return normalized;
+  }
+  return "reject";
+}
+
+function clampConfidence(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return 0;
+  return Math.max(0, Math.min(1, numeric));
+}
+
+function normalizeStringArray(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => String(item ?? "").trim())
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function shouldGenerateCandidate(candidate, config, aiReviewConfig) {
+  if (
+    !config.generation.allowedClassifications.includes(candidate.classification)
+  ) {
+    return false;
+  }
+
+  if (!aiReviewConfig.enabled) {
+    return true;
+  }
+
+  const review = candidate.aiReview;
+  if (!review || review.contentHash !== candidate.contentHash) {
+    return false;
+  }
+
+  return aiReviewConfig.allowedDecisions.includes(review.decision);
+}
+
+function resolvePublishedTitle(candidate) {
+  const review = candidate.aiReview;
+  if (
+    review?.contentHash === candidate.contentHash &&
+    review.decision === "approve" &&
+    typeof review.publicTitle === "string" &&
+    review.publicTitle.trim()
+  ) {
+    return review.publicTitle.trim();
+  }
+  return candidate.title;
+}
+
+function readBooleanEnv(name, fallback) {
+  const value = process.env[name];
+  if (value == null || value === "") return fallback;
+  return ["1", "true", "yes", "on"].includes(value.toLowerCase());
+}
+
+function readNumberEnv(name, fallback) {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
 function matchesPathPrefix(target, prefixes = []) {

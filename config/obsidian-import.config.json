@@ -60,5 +60,15 @@
   },
   "generation": {
     "allowedClassifications": ["candidate", "strong-candidate"]
+  },
+  "aiReview": {
+    "enabled": false,
+    "model": "gpt-5.4-mini",
+    "baseUrl": "https://api-vip.codex-for.me/v1",
+    "apiStyle": "responses",
+    "maxCandidatesPerRun": 8,
+    "maxExcerptChars": 12000,
+    "reviewClassifications": ["candidate", "strong-candidate"],
+    "allowedDecisions": ["approve"]
   }
 }

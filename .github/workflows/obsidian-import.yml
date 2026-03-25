@@ -2,6 +2,10 @@ name: Obsidian Import
 
 env:
   OBSIDIAN_SOURCE_REPO: Taz-dingo/obsidian-vault
+  AI_REVIEW_ENABLED: "true"
+  OPENAI_MODEL: gpt-5.4-mini
+  OPENAI_BASE_URL: https://api-vip.codex-for.me/v1
+  OPENAI_API_STYLE: responses
 
 on:
   workflow_dispatch:
@@ -15,6 +19,7 @@ jobs:
       contents: write
     env:
       OBSIDIAN_SOURCE_TOKEN: ${{ secrets.OBSIDIAN_SOURCE_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Checkout blog repo
         uses: actions/checkout@v4
@@ -49,10 +54,26 @@ jobs:
           echo "Missing OBSIDIAN_SOURCE_TOKEN secret for private repo access."
           exit 1
 
-      - name: Run import pipeline
+      - name: Require OpenAI API key
+        if: ${{ env.AI_REVIEW_ENABLED == 'true' && env.OPENAI_API_KEY == '' }}
+        run: |
+          echo "Missing OPENAI_API_KEY secret for AI review."
+          exit 1
+
+      - name: Scan changed notes
         env:
           OBSIDIAN_SOURCE_PATH: .cache/obsidian-source
-        run: pnpm obsidian:import
+        run: pnpm obsidian:scan:incremental
+
+      - name: Review candidates with AI
+        env:
+          OBSIDIAN_SOURCE_PATH: .cache/obsidian-source
+        run: pnpm obsidian:review:ai
+
+      - name: Build approved drafts
+        env:
+          OBSIDIAN_SOURCE_PATH: .cache/obsidian-source
+        run: pnpm obsidian:drafts
 
       - name: Commit generated content
         run: |

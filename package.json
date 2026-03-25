@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "obsidian:scan:backfill": "node scripts/obsidian-import/index.mjs scan-backfill",
     "obsidian:scan:incremental": "node scripts/obsidian-import/index.mjs scan-incremental",
+    "obsidian:review:ai": "node scripts/obsidian-import/index.mjs review-ai",
     "obsidian:drafts": "node scripts/obsidian-import/index.mjs build-drafts",
     "obsidian:import": "node scripts/obsidian-import/index.mjs run"
   },

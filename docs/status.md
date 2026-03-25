@@ -7,8 +7,8 @@
 - 当前聚焦：`single-repo AI blog`
 - 最新结构调整：`cbf550f` — `refactor(blog): collapse repo back to single app`
 - 最近一轮视觉基线：`e334936` — `feat(blog): redesign editorial layout`
-- 最近一轮自动化实现：`90ace85` — `feat(blog): add obsidian import automation scaffold`
-- 最近一轮自动导入结果：`8b7aff0` — `chore(blog): import obsidian notes`
+- 最近一轮自动化实现：`acd78df` — `feat(blog): add obsidian import automation scaffold`
+- 当前导入链路：`incremental scan → candidate pool → AI review → approved drafts`
 
 ## 当前完成情况
 
@@ -29,14 +29,16 @@
 - 站点对外定位已从 frontend 调整为 AI / agents / applied AI
 - 已产出 Obsidian → blog 自动发布方案 v1，明确 GitHub repo 为主数据源
 - 已落地 Obsidian → blog 导入骨架（扫描 / 候选池 / draft 生成 / GitHub Actions）
+- 已将导入链路升级为“增量扫描 / 候选池 / AI 审查 / 通过后生成 draft”
 - 已用私有源仓库 `Taz-dingo/obsidian-vault` 完成一轮本地真实验证
-- 已完成第一次 GitHub Actions `Obsidian Import` 线上实跑，并成功自动提交导入结果
+- 已验证 workflow 可接第三方 OpenAI-compatible `Responses API`
 
 ### 进行中
 
 - 移动端和真实内容下的样式复查
 - 首页首屏在真实设备宽度下的层级微调
-- Obsidian 导入规则调优（目录白名单、敏感词、自动发布阈值）
+- Obsidian 导入规则调优（目录白名单、敏感词、候选排序、自动发布阈值）
+- 无 `sourceId` 条件下的去重与重复审查控制
 
 ### 还未完成但明确需要做
 
@@ -45,7 +47,8 @@
 - 移动端更细致的视觉检查（主要剩真实设备复核）
 - 内容策略和写作规范补齐
 - 真实域名确定后的 canonical / OG URL / sharing image 收口
-- 第一次线上导入结果复核与规则收敛
+- 第一层粗筛从“通用规则分”收敛为“审查优先级排序器”
+- 无 `sourceId` 条件下的 `contentHash / reviewHash / renderHash` 方案落地
 
 ## 当前风格判断
 
@@ -65,8 +68,9 @@
 - 当前文章数量较少，很多列表页的气质还依赖版式而不是内容密度
 - 视觉系统虽已成型，但还需要更多真实内容验证
 - Obsidian 笔记格式差异很大，导入脚本目前优先保证“能过编译”，内容质量仍需继续调优
+- 当前第一层规则筛选只能承担“候选召回与排序”职责，不能单独作为发布决策
 - 当前默认导入规则仍偏通用，未完全贴合真实 vault 目录结构
-- 第一次线上导入已经成功，但导入质量仍需要人工复核并逐步收紧规则
+- 由于缺少稳定 `sourceId`，笔记改名或挪目录时仍存在重复抓取风险
 
 ## 建议的状态更新节奏
 

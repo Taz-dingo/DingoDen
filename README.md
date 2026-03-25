@@ -53,12 +53,14 @@ PUBLIC_SITE_URL=https://你的域名
 因此 GitHub Actions 还需要你配置一个 secret：
 
 - `OBSIDIAN_SOURCE_TOKEN`：对 `Taz-dingo/obsidian-vault` 具有只读权限的 GitHub token
+- `OPENAI_API_KEY`：用于 AI 审查候选笔记的 API key
 
 可用脚本：
 
 ```bash
 pnpm obsidian:scan:backfill
 pnpm obsidian:scan:incremental
+pnpm obsidian:review:ai
 pnpm obsidian:drafts
 pnpm obsidian:import
 ```
@@ -68,6 +70,29 @@ pnpm obsidian:import
 ```bash
 OBSIDIAN_SOURCE_PATH=/你的/obsidian/vault pnpm obsidian:import
 ```
+
+如果要在本地启用 AI 审查：
+
+```bash
+AI_REVIEW_ENABLED=true OPENAI_API_KEY=你的key OBSIDIAN_SOURCE_PATH=/你的/obsidian/vault pnpm obsidian:review:ai
+```
+
+GitHub Actions 里的导入链路现在会变成：增量扫描 → 规则粗筛写入候选池 → AI 审查 → 只生成 AI 通过的 draft。
+
+当前设计要点：
+
+- 第一层规则筛选的目标是**召回和排序**，不是最终质量判定
+- `candidate` / `strong-candidate` 只表示“值得优先送审”，不表示“一定适合公开发布”
+- 当前去重主要依赖 `sourcePath + contentHash`，AI 审查结果也绑定 `contentHash`
+- 由于当前没有稳定 `sourceId`，笔记改名或挪目录时仍可能被视为新内容；后续应补 `reviewHash / renderHash / rename heuristic`
+
+当前仓库默认已经对齐你本地 Codex 配置：
+
+- `OPENAI_MODEL=gpt-5.4-mini`
+- `OPENAI_BASE_URL=https://api-vip.codex-for.me/v1`
+- `OPENAI_API_STYLE=responses`
+
+如果之后你换第三方兼容源，只需要改 workflow 里的这三个环境变量即可。
 
 ## 项目文档
 
