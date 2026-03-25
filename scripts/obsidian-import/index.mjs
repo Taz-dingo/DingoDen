@@ -950,7 +950,7 @@ async function requestAiReview({
     excerpt,
   ].join("\n\n");
 
-  const result = await requestAiReviewWithFallback({
+  const payload = await requestAiReviewWithRetries({
     apiKey,
     model,
     baseUrl,
@@ -961,9 +961,9 @@ async function requestAiReview({
   });
 
   const outputText =
-    result.apiStyle === "chat-completions"
-      ? readChatCompletionsOutputText(result.payload)
-      : readResponseOutputText(result.payload);
+    apiStyle === "chat-completions"
+      ? readChatCompletionsOutputText(payload)
+      : readResponseOutputText(payload);
   const parsed = parseJsonObject(outputText, note.sourcePath);
 
   return {
@@ -977,7 +977,7 @@ async function requestAiReview({
   };
 }
 
-async function requestAiReviewWithFallback({
+async function requestAiReviewWithRetries({
   apiKey,
   model,
   baseUrl,
@@ -986,29 +986,30 @@ async function requestAiReviewWithFallback({
   userPrompt,
   sourcePath,
 }) {
-  const attemptedStyles =
-    apiStyle === "responses" ? ["responses", "chat-completions"] : [apiStyle];
+  const maxAttempts = 3;
   const failures = [];
 
-  for (const style of attemptedStyles) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
       const response = await requestCompatibleOpenAiApi({
         apiKey,
         model,
         baseUrl,
-        apiStyle: style,
+        apiStyle,
         systemPrompt,
         userPrompt,
       });
-      const payload = await readApiPayload(response, style, sourcePath);
-      return { apiStyle: style, payload };
+      return await readApiPayload(response, apiStyle, sourcePath);
     } catch (error) {
-      failures.push(`${style}: ${error.message}`);
+      failures.push(`attempt ${attempt}: ${error.message}`);
+      if (attempt < maxAttempts) {
+        await sleep(attempt * 1500);
+      }
     }
   }
 
   throw new Error(
-    `OpenAI review failed for ${sourcePath}. ${failures.join(" | ")}`,
+    `OpenAI review failed for ${sourcePath} after ${maxAttempts} attempts. ${failures.join(" | ")}`,
   );
 }
 
@@ -1298,6 +1299,10 @@ function buildRenderHash(renderedDocument) {
       renderedDocument,
     }),
   );
+}
+
+async function sleep(ms) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function pathExists(targetPath) {
