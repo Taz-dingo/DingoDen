@@ -93,7 +93,7 @@
 - 增量扫描 → 候选池 → AI 审查 → 只生成 AI `approve` 的 draft
 - 第一层规则筛选的职责是“召回和排序”，不是最终发布判定
 - 当前已经支持第三方 OpenAI-compatible `Responses API`
-- 当前没有稳定 `sourceId`，去重应按 `sourcePath + contentHash` 理解，并继续补 `reviewHash / renderHash / rename heuristic`
+- 当前没有稳定 `sourceId`，去重已按 `sourcePath + contentHash + reviewHash + renderHash` 建立，并增加了基于 `contentHash` 的 rename heuristic
 
 受影响的关键文件：
 

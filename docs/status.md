@@ -32,13 +32,13 @@
 - 已将导入链路升级为“增量扫描 / 候选池 / AI 审查 / 通过后生成 draft”
 - 已用私有源仓库 `Taz-dingo/obsidian-vault` 完成一轮本地真实验证
 - 已验证 workflow 可接第三方 OpenAI-compatible `Responses API`
+- 已补 `contentHash / reviewHash / renderHash` 基础去重链路，并增加基于 `contentHash` 的 rename 兜底
 
 ### 进行中
 
 - 移动端和真实内容下的样式复查
 - 首页首屏在真实设备宽度下的层级微调
 - Obsidian 导入规则调优（目录白名单、敏感词、候选排序、自动发布阈值）
-- 无 `sourceId` 条件下的去重与重复审查控制
 
 ### 还未完成但明确需要做
 
@@ -48,7 +48,7 @@
 - 内容策略和写作规范补齐
 - 真实域名确定后的 canonical / OG URL / sharing image 收口
 - 第一层粗筛从“通用规则分”收敛为“审查优先级排序器”
-- 无 `sourceId` 条件下的 `contentHash / reviewHash / renderHash` 方案落地
+- 无 `sourceId` 条件下继续验证 rename / 删除 / 二次导入的真实场景
 
 ## 当前风格判断
 

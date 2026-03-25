@@ -14,6 +14,10 @@ const importedRoot = path.join(rootDir, "src", "content", "blog", "imported");
 
 const command = process.argv[2] ?? "run";
 const defaultOpenAiBaseUrl = "https://api.openai.com/v1";
+const contentHashVersion = "v2";
+const markdownCleaningVersion = "v2";
+const reviewPromptVersion = "obsidian-review-v1";
+const renderHashVersion = "v1";
 
 async function main() {
   const config = await readJson(configPath);
@@ -241,24 +245,50 @@ async function buildCandidates(
     const relativePath = normalizePath(path.relative(sourceRoot, file));
     if (!isTrackedExtension(file)) continue;
 
-    const content = await fs.readFile(file, "utf8");
+    let content;
+    try {
+      content = await fs.readFile(file, "utf8");
+    } catch {
+      candidates.push({ sourcePath: relativePath, deleted: true });
+      continue;
+    }
+
     const parsed = parseFrontmatter(content);
+    const title = deriveTitle(relativePath, parsed.frontmatter, parsed.body);
+    const cleanedBody = cleanObsidianMarkdown(parsed.body);
     const metrics = scoreNote(
       relativePath,
       parsed.body,
       parsed.frontmatter,
       config,
     );
-    const fileHash = hashContent(parsed.body);
+    const contentHash = buildContentHash({
+      title,
+      frontmatter: parsed.frontmatter,
+      cleanedBody,
+    });
 
-    const existingState = state.notes?.[relativePath];
-    if (incrementalOnly && existingState?.contentHash === fileHash) {
+    const existingMatch = resolveExistingNoteState(
+      state.notes ?? {},
+      relativePath,
+      contentHash,
+    );
+    const existingState = existingMatch?.noteState;
+    if (
+      incrementalOnly &&
+      existingState?.sourcePath === relativePath &&
+      existingState?.contentHash === contentHash
+    ) {
       continue;
     }
 
     candidates.push({
       sourcePath: relativePath,
-      title: deriveTitle(relativePath, parsed.frontmatter, parsed.body),
+      previousSourcePath:
+        existingMatch?.stateKey && existingMatch.stateKey !== relativePath
+          ? existingMatch.stateKey
+          : null,
+      title,
       lastModifiedAt: (await fs.stat(file)).mtime.toISOString(),
       score: metrics.score,
       classification: metrics.classification,
@@ -266,11 +296,14 @@ async function buildCandidates(
       reasons: metrics.reasons,
       imported: Boolean(existingState?.blogSlug),
       blogSlug: existingState?.blogSlug ?? null,
-      contentHash: fileHash,
+      contentHash,
+      renderHash: existingState?.renderHash ?? null,
     });
   }
 
-  return candidates.sort((left, right) => right.score - left.score);
+  return candidates.sort(
+    (left, right) => (right.score ?? 0) - (left.score ?? 0),
+  );
 }
 
 function isTrackedExtension(file) {
@@ -451,9 +484,28 @@ function deriveTitle(relativePath, frontmatter, body) {
 function mergeCandidates(existing, incoming) {
   const map = new Map(existing.map((item) => [item.sourcePath, item]));
   for (const item of incoming) {
-    map.set(item.sourcePath, item);
+    if (item.deleted) {
+      map.delete(item.sourcePath);
+      continue;
+    }
+
+    if (
+      item.previousSourcePath &&
+      item.previousSourcePath !== item.sourcePath
+    ) {
+      map.delete(item.previousSourcePath);
+    }
+
+    const existingItem = map.get(item.sourcePath);
+    map.set(item.sourcePath, {
+      ...existingItem,
+      ...item,
+      aiReview: item.aiReview ?? existingItem?.aiReview,
+    });
   }
-  return [...map.values()].sort((left, right) => right.score - left.score);
+  return [...map.values()].sort(
+    (left, right) => (right.score ?? 0) - (left.score ?? 0),
+  );
 }
 
 async function buildDrafts(
@@ -490,43 +542,65 @@ async function buildDrafts(
       continue;
     }
 
+    const existingMatch = resolveExistingNoteState(
+      nextState.notes,
+      candidate.sourcePath,
+      candidate.contentHash,
+    );
+    const existingState = existingMatch?.noteState;
     const resolvedTitle = resolvePublishedTitle(candidate);
     const slug =
       candidate.blogSlug ??
+      existingState?.blogSlug ??
       slugify(candidate.aiReview?.publicSlug?.trim() || resolvedTitle);
     const targetDir = path.join(importedRoot, slug);
     const targetFile = path.join(targetDir, "index.mdx");
     const description = buildDescription(cleanedBody, resolvedTitle);
     const today = new Date().toISOString().slice(0, 10);
+    const renderedDocument = [
+      "---",
+      `title: "${escapeYaml(resolvedTitle)}"`,
+      `description: "${escapeYaml(description)}"`,
+      `pubDate: "${today}"`,
+      `updatedDate: "${today}"`,
+      'source: "obsidian-import"',
+      `sourcePath: "${escapeYaml(candidate.sourcePath)}"`,
+      `importedAt: "${new Date().toISOString()}"`,
+      "---",
+      "",
+      cleanedBody,
+      "",
+    ].join("\n");
+    const renderHash = buildRenderHash(renderedDocument);
 
     await fs.mkdir(targetDir, { recursive: true });
-    await fs.writeFile(
-      targetFile,
-      [
-        "---",
-        `title: "${escapeYaml(resolvedTitle)}"`,
-        `description: "${escapeYaml(description)}"`,
-        `pubDate: "${today}"`,
-        `updatedDate: "${today}"`,
-        'source: "obsidian-import"',
-        `sourcePath: "${escapeYaml(candidate.sourcePath)}"`,
-        `importedAt: "${new Date().toISOString()}"`,
-        "---",
-        "",
-        cleanedBody,
-        "",
-      ].join("\n"),
-      "utf8",
-    );
+    if (
+      existingState?.renderHash !== renderHash ||
+      !(await pathExists(targetFile))
+    ) {
+      await fs.writeFile(targetFile, renderedDocument, "utf8");
+      generatedCount += 1;
+    }
 
+    const reviewHash = buildReviewHash(candidate.contentHash, aiReviewConfig);
     nextState.notes[candidate.sourcePath] = {
+      sourcePath: candidate.sourcePath,
       blogSlug: slug,
       contentHash: candidate.contentHash,
+      reviewHash,
+      renderHash,
       classification: candidate.classification,
+      aiDecision:
+        candidate.aiReview?.decision ?? existingState?.aiDecision ?? null,
       updatedAt: new Date().toISOString(),
     };
 
-    generatedCount += 1;
+    if (
+      existingMatch?.stateKey &&
+      existingMatch.stateKey !== candidate.sourcePath
+    ) {
+      delete nextState.notes[existingMatch.stateKey];
+    }
   }
 
   return { generatedCount, state: nextState };
@@ -652,12 +726,14 @@ async function reviewCandidatesWithAi(
       note: entry,
       excerpt,
     });
+    const reviewHash = buildReviewHash(entry.contentHash, aiReviewConfig);
 
     entry.aiReview = {
       ...aiReview,
       model: aiReviewConfig.model,
       reviewedAt: new Date().toISOString(),
       contentHash: entry.contentHash,
+      reviewHash,
     };
   }
 
@@ -673,15 +749,14 @@ async function reviewCandidatesWithAi(
 
 function selectCandidatesForAiReview(candidates, aiReviewConfig) {
   return candidates
-    .filter((candidate) => !candidate.imported)
+    .filter((candidate) => !candidate.deleted)
     .filter((candidate) =>
       aiReviewConfig.reviewClassifications.includes(candidate.classification),
     )
     .filter((candidate) => {
       const existingReview = candidate.aiReview;
-      return (
-        !existingReview || existingReview.contentHash !== candidate.contentHash
-      );
+      const reviewHash = buildReviewHash(candidate.contentHash, aiReviewConfig);
+      return !existingReview || existingReview.reviewHash !== reviewHash;
     })
     .sort((left, right) => {
       const scoreDiff = right.score - left.score;
@@ -904,7 +979,11 @@ function shouldGenerateCandidate(candidate, config, aiReviewConfig) {
   }
 
   const review = candidate.aiReview;
-  if (!review || review.contentHash !== candidate.contentHash) {
+  const desiredReviewHash = buildReviewHash(
+    candidate.contentHash,
+    aiReviewConfig,
+  );
+  if (!review || review.reviewHash !== desiredReviewHash) {
     return false;
   }
 
@@ -933,6 +1012,67 @@ function readBooleanEnv(name, fallback) {
 function readNumberEnv(name, fallback) {
   const value = Number(process.env[name]);
   return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function resolveExistingNoteState(notes, sourcePath, contentHash) {
+  if (notes[sourcePath]) {
+    return {
+      stateKey: sourcePath,
+      noteState: notes[sourcePath],
+      matchedBy: "path",
+    };
+  }
+
+  for (const [stateKey, noteState] of Object.entries(notes)) {
+    if (noteState?.contentHash === contentHash) {
+      return { stateKey, noteState, matchedBy: "contentHash" };
+    }
+  }
+
+  return null;
+}
+
+function buildContentHash({ title, frontmatter, cleanedBody }) {
+  return hashContent(
+    JSON.stringify({
+      version: contentHashVersion,
+      title,
+      cleanedBody,
+      publish: frontmatter.publish ?? null,
+      private: frontmatter.private ?? null,
+      tags: frontmatter.tags ?? null,
+    }),
+  );
+}
+
+function buildReviewHash(contentHash, aiReviewConfig) {
+  return hashContent(
+    JSON.stringify({
+      version: reviewPromptVersion,
+      contentHash,
+      model: aiReviewConfig.model,
+      apiStyle: aiReviewConfig.apiStyle,
+      cleaningVersion: markdownCleaningVersion,
+    }),
+  );
+}
+
+function buildRenderHash(renderedDocument) {
+  return hashContent(
+    JSON.stringify({
+      version: renderHashVersion,
+      renderedDocument,
+    }),
+  );
+}
+
+async function pathExists(targetPath) {
+  try {
+    await fs.access(targetPath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function matchesPathPrefix(target, prefixes = []) {
