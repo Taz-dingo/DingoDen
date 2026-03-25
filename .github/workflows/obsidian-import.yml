@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      OBSIDIAN_SOURCE_TOKEN: ${{ secrets.OBSIDIAN_SOURCE_TOKEN }}
     steps:
       - name: Checkout blog repo
         uses: actions/checkout@v4
@@ -37,12 +39,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.OBSIDIAN_SOURCE_REPO }}
-          token: ${{ secrets.OBSIDIAN_SOURCE_TOKEN }}
+          token: ${{ env.OBSIDIAN_SOURCE_TOKEN }}
           path: .cache/obsidian-source
           fetch-depth: 0
 
       - name: Require private repo token
-        if: ${{ secrets.OBSIDIAN_SOURCE_TOKEN == '' }}
+        if: ${{ env.OBSIDIAN_SOURCE_TOKEN == '' }}
         run: |
           echo "Missing OBSIDIAN_SOURCE_TOKEN secret for private repo access."
           exit 1
