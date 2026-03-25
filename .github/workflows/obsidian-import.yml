@@ -65,6 +65,29 @@ jobs:
           OBSIDIAN_SOURCE_PATH: .cache/obsidian-source
         run: pnpm obsidian:scan:incremental
 
+      - name: Smoke test AI API
+        run: |
+          set -euo pipefail
+          RESPONSE_FILE="$(mktemp)"
+          HTTP_CODE=$(
+            curl -sS               -o "$RESPONSE_FILE"               -w "%{http_code}"               -X POST "${OPENAI_BASE_URL}/responses"               -H "Authorization: Bearer ${OPENAI_API_KEY}"               -H "Accept: application/json"               -H "Content-Type: application/json"               --data @- <<EOF
+          {
+            "model": "${OPENAI_MODEL}",
+            "instructions": "Return raw JSON only.",
+            "input": "Reply with {\"ok\":true}",
+            "max_output_tokens": 50
+          }
+          EOF
+          )
+          echo "Smoke test HTTP: ${HTTP_CODE}"
+          echo "Smoke test body bytes: $(wc -c < "$RESPONSE_FILE" | tr -d ' ')"
+          echo "Smoke test body preview:"
+          head -c 300 "$RESPONSE_FILE"
+          echo
+          test "$HTTP_CODE" -ge 200
+          test "$HTTP_CODE" -lt 300
+          test -s "$RESPONSE_FILE"
+
       - name: Review candidates with AI
         env:
           OBSIDIAN_SOURCE_PATH: .cache/obsidian-source
